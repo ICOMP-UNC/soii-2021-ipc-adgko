@@ -5,7 +5,7 @@
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <netinet/in.h>
-#define TAM 256
+#define TAM 1024
 
 #define PROD1_PATH "prod1"
 #define PROD2_PATH "prod2"

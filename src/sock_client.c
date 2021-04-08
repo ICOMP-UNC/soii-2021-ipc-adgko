@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h> 
-#define TAM 256
+#define TAM 1024
 
 int main( int argc, char *argv[] ) {
 	int32_t sockfd, puerto;
