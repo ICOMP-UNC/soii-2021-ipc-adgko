@@ -6,6 +6,9 @@
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/ipc.h>
+#include <sys/types.h>
+#include <sys/msg.h>
 #define TAM 1024
 
 #define PROD1_PATH "prod1"
