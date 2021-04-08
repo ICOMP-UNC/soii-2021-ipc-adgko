@@ -11,6 +11,12 @@ int32_t main( int argc, char *argv[] ) {
 	ssize_t n;
 	int32_t terminar = 0;
     int32_t pid_prod1, pid_prod2, pid_prod3;
+	char* mensaje; 											//lo que recibe de los productores
+	char* respuesta;										//lo que envia al cliente
+
+	char* mensaje_prod1 = "Productor 1: ";												
+	char* mensaje_prod2 = "Productor 2: ";	
+	char* mensaje_prod3 = "Productor 3: ";	
 
 	if ( argc < 2 ) {
         	fprintf( stderr, "Uso: %s <puerto>\n", argv[0] );
@@ -72,40 +78,92 @@ int32_t main( int argc, char *argv[] ) {
 		pid = fork(); 
 
 		if ( pid == 0 )
-		  {  // Proceso hijo
+		{  // Proceso hijo
 		    close( sockfd );
 
-		while(1) {
-		printf( "%sIngrese el mensaje a transmitir: %s",KBLU,KNRM );
-		memset( buffer, '\0', TAM );
-		fgets( buffer, TAM-1, stdin );
+			while(1) {
+				printf( "%sIngrese el mensaje a transmitir: %s",KBLU,KNRM );
+				memset( buffer, '\0', TAM );
+				fgets( buffer, TAM-1, stdin );
 
-		n = send( newsockfd, buffer, strlen(buffer),0 );
-        if(n < 0){
-            perror("fallo en enviar info");
-            exit(1);
-        }
+				n = send( newsockfd, buffer, strlen(buffer),0 );
+				if(n < 0){
+					perror("fallo en enviar info");
+					exit(1);
+				}
 
-		// Verificando si se escribió: fin
-		buffer[strlen(buffer)-1] = '\0';
-		if( !strcmp( "fin", buffer ) ) {
-			terminar = 1;
+				// Verificando si se escribió: fin
+				buffer[strlen(buffer)-1] = '\0';
+				if( !strcmp( "fin", buffer ) ) {
+					terminar = 1;
+				}
+
+				memset( buffer, '\0', TAM );
+				n = recv( newsockfd, buffer, TAM,0 );
+				if(n < 0){
+					perror("fallo en recibir info");
+					exit(1);
+				}
+				printf( "%sRespuesta: %s%s\n", KBLU,buffer,KNRM );
+				if( terminar ) {
+					printf( "Finalizando ejecución\n" );
+					exit(0);
+				}
+
+				/*
+					Revisa la cola de mensaje en espera que alguno de los productores haya colocado algo
+				*/
+
+				mensaje = recive_from_queue((long)ID_PROD1,MSG_NOERROR | IPC_NOWAIT);
+				if(errno != ENOMSG){
+
+					char respuesta[strlen(mensaje_prod1)+strlen(mensaje)];
+					sprintf(respuesta,"%s%s",mensaje_prod1,mensaje);
+					n = send( newsockfd, buffer, strlen(buffer),0 );
+						if(n < 0){
+						perror("fallo en enviar info");
+						exit(1);
+					}
+					//login_request();
+
+				}
+
+				mensaje = recive_from_queue((long)ID_PROD2,MSG_NOERROR | IPC_NOWAIT);
+				if(errno != ENOMSG){
+
+					char respuesta[strlen(mensaje_prod2)+strlen(mensaje)];
+					sprintf(respuesta,"%s%s",mensaje_prod2,mensaje);
+					n = send( newsockfd, buffer, strlen(buffer),0 );
+						if(n < 0){
+						perror("fallo en enviar info");
+						exit(1);
+					}
+					//names_request();
+				}
+
+				mensaje = recive_from_queue((long)ID_PROD3,MSG_NOERROR | IPC_NOWAIT);
+				if(errno != ENOMSG){
+
+					char respuesta[strlen(mensaje_prod3)+strlen(mensaje)];
+					sprintf(respuesta,"%s%s",mensaje_prod3,mensaje);
+					n = send( newsockfd, buffer, strlen(buffer),0 );
+						if(n < 0){
+						perror("fallo en enviar info");
+						exit(1);
+					}
+					//password_change();
+				}
+
+				if(mensaje != NULL){
+
+				}
+				if(respuesta != NULL){
+
+				}
+
+			}
+
 		}
-
-		memset( buffer, '\0', TAM );
-		n = recv( newsockfd, buffer, TAM,0 );
-        if(n < 0){
-            perror("fallo en recibir info");
-            exit(1);
-        }
-		printf( "%sRespuesta: %s%s\n", KBLU,buffer,KNRM );
-		if( terminar ) {
-			printf( "Finalizando ejecución\n" );
-			exit(0);
-		}
-		}
-
-		  }
 
 	}
 	return 0; 

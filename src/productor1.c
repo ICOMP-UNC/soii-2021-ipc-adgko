@@ -1,15 +1,24 @@
 #include "../include/recursos.h"
 
 int32_t main(){
-    printf("Soy el Productor 1\n");
+    printf("%sSoy el Productor 1%s\n",KGRN,KNRM);
     int32_t numero;
+    char mensaje[TAM];
+    if(mensaje == NULL){
+		printf("%sError alocando memoria%s\n",KRED,KNRM);
+		exit(1);
+	}
+    char* primer_parte = "El número aleatorio es ";
+    char* salto = "\n";
 
+    /*
+        Mientras funcione, genera un número aleatorio y lo guarda como parte del mensaje
+        luego lo envía a la cola de mensaje con su ID
+    */
     while(1){
         numero = rand();
-        if(numero < 0){
-
-        }
-        //printf("El numero enviado es %d\n",numero);
+        sprintf(mensaje,"%s%d%s",primer_parte,numero,salto);
+        send_to_queue((long) ID_PROD1, &mensaje[0]);
         sleep(1/X);
     }
 }

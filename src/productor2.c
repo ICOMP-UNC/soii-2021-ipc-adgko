@@ -10,8 +10,12 @@ int32_t main(){
     printf("Soy el Productor 2\n");
 
     while(1){
-        
+
         char buffer[TAM];
+        if(buffer == NULL){
+		    printf("%sError alocando memoria%s\n",KRED,KNRM);
+		    exit(1);
+	    }
         char * path = "/proc/meminfo";
         FILE* file = fopen(path, "r");
         if( file == NULL)
@@ -23,6 +27,10 @@ int32_t main(){
         }
 
         char linea[TAM];
+        if(linea == NULL){
+            printf("%sError alocando memoria%s\n",KRED,KNRM);
+            exit(1);
+        }        
         for( int i = 0; i <= linea_free_memory; i++)
         fgets(linea, TAM, file);
 
@@ -48,6 +56,7 @@ int32_t main(){
         meminfo = meminfo / 1024;
         sprintf(buffer, "%ld MB", meminfo);
         //printf("%s\n",buffer);
+        send_to_queue((long) ID_PROD2, &buffer[0]);
         sleep(1/Y);
         }
 
