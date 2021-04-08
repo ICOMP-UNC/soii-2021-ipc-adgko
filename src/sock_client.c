@@ -1,53 +1,64 @@
-// Client side C/C++ program to demonstrate Socket programming
 #include <stdio.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <string.h>
-#define PORT 8080
-#define TAM 1024
-   
-int main()
-{
-    int sock = 0; 
-	ssize_t valread;
-    struct sockaddr_in serv_addr;
-    //char *hello = "Hello from client";
-    char buffer[1024] = {0};
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
-        printf("\n Socket creation error \n");
-        return -1;
-    }
-   
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
-       
-    // Convert IPv4 and IPv6 addresses from text to binary form
-    if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0) 
-    {
-        printf("\nInvalid address/ Address not supported \n");
-        return -1;
-    }
-   
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        printf("\nConnection Failed \n");
-        return -1;
-    }
-	while(1){
-	memset(buffer, 0, TAM);	
-	printf("ingrese mensaje a enviar\n");
-	fgets(buffer,TAM,stdin);
-    send(sock , buffer , strlen(buffer) , 0 );
-    printf("Hello message sent\n");
-    valread = recv( sock , buffer, 1024,0);
-	if(valread < 0){
-		perror("no se recibió la info");
-		exit(1);
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h> 
+#define TAM 256
+
+int main( int argc, char *argv[] ) {
+	int32_t sockfd, puerto;
+	struct sockaddr_in serv_addr;
+	struct hostent *server;
+    ssize_t n;
+
+	char buffer[TAM];
+	if ( argc < 3 ) {
+		fprintf( stderr, "Uso %s host puerto\n", argv[0]);
+		exit( 0 );
 	}
-    printf("%s\n",buffer );
+
+	puerto = atoi( argv[2] );
+	sockfd = socket( AF_INET, SOCK_STREAM, 0 );
+
+	server = gethostbyname( argv[1] );
+
+	memset( (char *) &serv_addr, '0', sizeof(serv_addr) );
+	serv_addr.sin_family = AF_INET;
+	bcopy( (char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, (size_t )server->h_length );
+	serv_addr.sin_port = htons( (uint16_t)puerto );
+	if ( connect( sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr ) ) < 0 ) {
+		perror( "conexion" );
+		exit( 1 );
 	}
-    return 0;
-}
+
+		while(1) {
+			memset( buffer, 0, TAM );
+			
+			n = read( sockfd, buffer, TAM-1 );
+			if ( n < 0 ) {
+			  perror( "lectura de socket" );
+			  exit(1);
+			}
+			
+			printf( "PROCESO %d. ", getpid() );
+			printf( "Recibí: %s", buffer );
+			
+			n = write( sockfd, "Obtuve su mensaje", 18 );
+			if ( n < 0 ) {
+			  perror( "escritura en socket" );
+			  exit( 1 );
+			}
+			// Verificación de si hay que terminar
+			buffer[strlen(buffer)-1] = '\0';
+			if( !strcmp( "fin", buffer ) ) {
+			  printf( "PROCESO %d. Como recibí 'fin', termino la ejecución.\n\n", getpid() );
+			  exit(0);
+			}
+
+		}
+
+	return 0;
+} 
