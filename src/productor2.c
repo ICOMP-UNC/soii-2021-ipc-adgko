@@ -1,19 +1,16 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-#define TAM 1024
+#include "../include/recursos.h"
 
 #define SERVER_OK 			0
 #define SERVER_ER 			1
 #define linea_free_memory   1
-#define Y 3
+
 
 int32_t main(){
 
+    printf("Soy el Productor 2\n");
+
     while(1){
-        printf("Soy el Productor 2\n");
+        
         char buffer[TAM];
         char * path = "/proc/meminfo";
         FILE* file = fopen(path, "r");
@@ -50,7 +47,7 @@ int32_t main(){
         long meminfo = strtol(buffer, NULL, 10);
         meminfo = meminfo / 1024;
         sprintf(buffer, "%ld MB", meminfo);
-        printf("%s\n",buffer);
+        //printf("%s\n",buffer);
         sleep(1/Y);
         }
 

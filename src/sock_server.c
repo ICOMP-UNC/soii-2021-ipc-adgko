@@ -1,18 +1,9 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h> 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#define TAM 1024
+#include "../include/deliverymanager.h"
 
-#define PROD1_PATH "prod1"
-#define PROD2_PATH "prod2"
-#define PROD3_PATH "prod3"
-
-
-int main( int argc, char *argv[] ) {
+/*
+	Programa Delivery Manager, para recibir lo que envíen los productores y enviarlo a los clientes
+*/
+int32_t main( int argc, char *argv[] ) {
 	int32_t sockfd, newsockfd, puerto, pid;
     uint32_t clilen;
 	char buffer[TAM];
@@ -26,6 +17,9 @@ int main( int argc, char *argv[] ) {
 		exit( 1 );
 	}
 
+	/*
+		Crea procesos hijos para los 3 productores
+	*/
     pid_prod1 = fork();
   		if ( pid_prod1 == 0 ) {
     		if( execv(PROD1_PATH, argv) == -1 ) {
@@ -69,7 +63,7 @@ int main( int argc, char *argv[] ) {
 
         printf( "Proceso: %d - socket disponible: %d\n", getpid(), ntohs(serv_addr.sin_port) );
 
-	listen( sockfd, 5 );
+	listen( sockfd, 5000 );
 	clilen = sizeof( cli_addr );
 
 	while( 1 ) {
@@ -82,7 +76,7 @@ int main( int argc, char *argv[] ) {
 		    close( sockfd );
 
 		while(1) {
-		printf( "Ingrese el mensaje a transmitir: " );
+		printf( "%sIngrese el mensaje a transmitir: %s",KBLU,KNRM );
 		memset( buffer, '\0', TAM );
 		fgets( buffer, TAM-1, stdin );
 
@@ -104,7 +98,7 @@ int main( int argc, char *argv[] ) {
             perror("fallo en recibir info");
             exit(1);
         }
-		printf( "Respuesta: %s\n", buffer );
+		printf( "%sRespuesta: %s%s\n", KBLU,buffer,KNRM );
 		if( terminar ) {
 			printf( "Finalizando ejecución\n" );
 			exit(0);

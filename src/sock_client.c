@@ -1,14 +1,10 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h> 
-#define TAM 1024
+#include "../include/cliente.h"
 
-int main( int argc, char *argv[] ) {
+
+/*
+	Función que se conecta al Delivery Managment vía socket y recibe mensajes
+*/
+int32_t main( int argc, char *argv[] ) {
 	int32_t sockfd, puerto;
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
@@ -43,8 +39,8 @@ int main( int argc, char *argv[] ) {
 			  exit(1);
 			}
 			
-			printf( "PROCESO %d. ", getpid() );
-			printf( "Recibí: %s", buffer );
+			printf( "%sPROCESO %d. %s \n", KBLU, getpid(),KNRM );
+			printf( "%sRecibí: %s%s", KBLU,buffer,KNRM );
 			
 			n = write( sockfd, "Obtuve su mensaje", 18 );
 			if ( n < 0 ) {
