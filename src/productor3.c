@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#define TAM 1024
-#define Z 4
+#include "../include/recursos.h"
 
 int32_t main(){
     printf("Soy el Productor 3\n");
@@ -12,7 +8,7 @@ int32_t main(){
         double load_avg[1];
         getloadavg(load_avg, 1);
         sprintf(buffer, "%f", load_avg[0]);
-        printf("%s",buffer);
+        //printf("%s",buffer);
         sleep(1/Z);
     }
 
