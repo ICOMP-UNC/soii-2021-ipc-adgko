@@ -7,7 +7,7 @@
 
 int32_t main(){
 
-    printf("Soy el Productor 2\n");
+    printf("%sProductor 2 en linea%s\n",KCYN,KNRM);
 
     while(1){
 
@@ -54,7 +54,7 @@ int32_t main(){
 
         long meminfo = strtol(buffer, NULL, 10);
         meminfo = meminfo / 1024;
-        sprintf(buffer, "%ld MB", meminfo);
+        sprintf(buffer, "%ld MB\n", meminfo);
         //printf("%s\n",buffer);
         send_to_queue((long) ID_PROD2, &buffer[0]);
         sleep(1/Y);

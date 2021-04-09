@@ -39,7 +39,7 @@ int32_t main( int argc, char *argv[] ) {
 			  exit(1);
 			}
 			
-			printf( "%sPROCESO %d. %s \n", KBLU, getpid(),KNRM );
+			//printf( "%sPROCESO %d. %s \n", KBLU, getpid(),KNRM );
 			printf( "%sRecibí: %s%s", KBLU,buffer,KNRM );
 			
 			n = write( sockfd, "Obtuve su mensaje", 18 );
