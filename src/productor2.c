@@ -54,7 +54,7 @@ int32_t main(){
 
         long meminfo = strtol(buffer, NULL, 10);
         meminfo = meminfo / 1024;
-        sprintf(buffer, "%ld MB\n", meminfo);
+        sprintf(buffer, "Memoria disponible %ld MB\n", meminfo);
         //printf("%s\n",buffer);
         send_to_queue((long) ID_PROD2, &buffer[0]);
         sleep(1/Y);

@@ -20,6 +20,7 @@
 #define ID_PROD1 1
 #define ID_PROD2 2
 #define ID_PROD3 3
+#define ID_CLI   4
 
 /*
     Etiquetas para los colores de los mensajes
@@ -38,14 +39,14 @@
 /*
 	Variables empleadas para imprimir en colores
 */
-#define KNRM  					"\x1B[0m"	//normal
-#define KRED  					"\x1B[31m"	//rojo
-#define KGRN  					"\x1B[32m"	//verde
-#define KYEL  					"\x1B[33m"	//amarillo
-#define KBLU  					"\x1B[34m"	//azul
-#define KMAG  					"\x1B[35m"	//magenta
-#define KCYN  					"\x1B[36m"	//cyan
-#define KWHT  					"\x1B[37m"	//blanco
+#define KNRM  "\x1B[0m"	    //normal
+#define KRED  "\x1B[31m"	//rojo
+#define KGRN  "\x1B[32m"	//verde
+#define KYEL  "\x1B[33m"	//amarillo
+#define KBLU  "\x1B[34m"	//azul
+#define KMAG  "\x1B[35m"	//magenta
+#define KCYN  "\x1B[36m"	//cyan
+#define KWHT  "\x1B[37m"	//blanco
 
 /*
     Si no se declaran acá no las reconoce

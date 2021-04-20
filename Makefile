@@ -15,6 +15,7 @@ cliente:
 	
 server:
 	gcc  src/sock_server.c src/funciones1.c -o bin/DeliveryManager $(FLAGS_GCC)
+	gcc  src/cli.c src/funciones1.c -o bin/cli $(FLAGS_GCC)
 	
 productores:
 	gcc src/productor1.c src/funciones1.c -o bin/prod1 $(FLAGS_GCC)
