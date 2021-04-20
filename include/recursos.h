@@ -22,6 +22,20 @@
 #define ID_PROD3 3
 
 /*
+    Etiquetas para los colores de los mensajes
+*/
+#define GREAT   1
+#define OK      2
+#define WARNING 3
+#define ERROR   4
+
+/*
+    Tags para cerrar las conexiones
+*/
+#define TRUE             1
+#define FALSE            0
+
+/*
 	Variables empleadas para imprimir en colores
 */
 #define KNRM  					"\x1B[0m"	//normal
@@ -39,3 +53,5 @@
 int32_t get_queue();
 int32_t send_to_queue(long, char [TAM] );
 char* recive_from_queue(long , int32_t );
+
+void impresion(char* mensaje, int codigo);

@@ -3,14 +3,12 @@
 #include <sys/types.h>
 #include <sys/msg.h>
 
-#define TAM 1024
-
 /*
 	Elementos empleados para crear y usar la cola de mensajes
 */
 #define QUEUE_NAME 			"../archivos/queue"
 #define UNIQUE_KEY 			65
-#define PROJ_ID 			0666
+#define PROJ_ID 			   0666
 #define direccion_server 	"src/sock_server.c"
 
 /*
