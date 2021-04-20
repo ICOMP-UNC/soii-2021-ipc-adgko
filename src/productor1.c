@@ -1,7 +1,7 @@
 #include "../include/recursos.h"
 
 int32_t main(){
-    printf("%sProductor 1 en linea%s\n",KGRN,KNRM);
+    printf("%sProductor 1 en linea%s\n",KBLU,KNRM);
     int32_t numero;
     char mensaje[TAM];
     if(mensaje == NULL){
