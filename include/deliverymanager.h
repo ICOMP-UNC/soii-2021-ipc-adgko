@@ -9,8 +9,11 @@
 #include <sys/ipc.h>
 #include <sys/types.h>
 #include <sys/msg.h>
-#define TAM 1024
+#include <sys/ioctl.h> //para poner no bloqueante
+#include <sys/poll.h> 
 
 #define PROD1_PATH "prod1"
 #define PROD2_PATH "prod2"
 #define PROD3_PATH "prod3"
+
+#define MAX_CLIENTES 5000
