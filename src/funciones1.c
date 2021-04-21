@@ -54,3 +54,4 @@ char* recive_from_queue(long id_mensaje, int32_t flag) {
   sprintf(mensaje,"%s", mensaje_str.mtext);
   return mensaje;
 }
+

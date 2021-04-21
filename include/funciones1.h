@@ -2,6 +2,7 @@
 #include <sys/ipc.h>
 #include <sys/types.h>
 #include <sys/msg.h>
+#include <openssl/md5.h>
 
 /*
 	Elementos empleados para crear y usar la cola de mensajes

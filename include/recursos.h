@@ -33,8 +33,8 @@
 /*
     Tags para cerrar las conexiones
 */
-#define TRUE             1
-#define FALSE            0
+#define TRUE    1
+#define FALSE   0
 
 /*
 	Variables empleadas para imprimir en colores
@@ -47,6 +47,13 @@
 #define KMAG  "\x1B[35m"	//magenta
 #define KCYN  "\x1B[36m"	//cyan
 #define KWHT  "\x1B[37m"	//blanco
+
+typedef struct {
+  char fd[TAM];
+  char ip[TAM];
+  char puerto[TAM];
+  char conectado[TAM];
+} Cliente;
 
 /*
     Si no se declaran acá no las reconoce

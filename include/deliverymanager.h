@@ -11,6 +11,7 @@
 #include <sys/msg.h>
 #include <sys/ioctl.h> //para poner no bloqueante
 #include <sys/poll.h> 
+#include <arpa/inet.h>
 
 /*
     Paths de los binarios productores y CLI
@@ -30,3 +31,6 @@
 #define MINUTES     3
 #define SECONDS     60
 #define MILISECONDS 1000
+
+void validar_comando(char *a, char *b, char *c);
+
