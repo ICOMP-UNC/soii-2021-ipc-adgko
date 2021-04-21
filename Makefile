@@ -1,4 +1,4 @@
-FLAGS_GCC = -std=gnu11 -Wall -Werror -pedantic -Wextra -Wconversion
+FLAGS_GCC = -std=gnu11 -Wall -Werror -pedantic -Wextra -Wconversion -g
 FLAGS_CPP = --enable=performance,portability,information,unusedFunction -q
 
 all: check cliente server productores

@@ -250,7 +250,7 @@ int32_t main( int argc, char *argv[] ) {
 							}
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
 						mensaje = recive_from_queue((long)ID_PROD3,MSG_NOERROR | IPC_NOWAIT);
-						if(errno != ENOMSG){
+						if(errno != ENOMSG){						
 							//for(long unsigned int k3 = i; k3 < current_size; k3++){
 								char respuesta[strlen(mensaje_prod1)+strlen(mensaje)];							
 								sprintf(respuesta,"%s%s",mensaje_prod3,mensaje);
@@ -263,7 +263,7 @@ int32_t main( int argc, char *argv[] ) {
 							}
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
 						mensaje = recive_from_queue((long)ID_CLI,MSG_NOERROR | IPC_NOWAIT);
-						if(errno != ENOMSG){
+						if(errno != ENOMSG){						
 							mensaje[strlen(mensaje)-1]='\0'; //coloca un valor final al final del comando
 
 							//variables que usa para guardar comandos, opciones y argumentos
@@ -286,13 +286,26 @@ int32_t main( int argc, char *argv[] ) {
 									sprintf(productor,"%s",mensaje_comando);
 								}
 									
-
 								mensaje_comando = strtok(NULL," ");
 							}
 
-							fflush(stdout);			//limpio buffer o se va a pisar
+							fflush(stdout);			//limpio el teclado o se va a pisar
 
 							printf(" %s %s %s\n", comando, socket, productor );
+
+								if( strcmp("add", comando) == 0 ){
+									printf("estamos agregando\n");
+								}
+								else if( strcmp("delete", comando) == 0 ){
+									printf("estamos borrando\n");
+								}
+								else if( strcmp("log", comando) == 0 ){
+									printf("estamos logueando\n");
+								}
+								else{
+									printf("estamos nose\n");
+								}
+								//memset(mensaje_comando,'\0',strlen(mensaje_comando));
 						}
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene						
 				/////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
