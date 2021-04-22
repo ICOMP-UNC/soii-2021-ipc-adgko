@@ -17,10 +17,12 @@
 /*
     etiquetas de los productores para la cola de mensajes
 */
-#define ID_PROD1 1
-#define ID_PROD2 2
-#define ID_PROD3 3
-#define ID_CLI   4
+#define ID_PROD1    1
+#define ID_PROD2    2
+#define ID_PROD3    3
+#define ID_CLI      4
+#define ID_FAIL_ADD 5
+#define ID_FAIL_DEL 5
 
 /*
     Etiquetas para los colores de los mensajes
