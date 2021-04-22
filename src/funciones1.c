@@ -55,3 +55,53 @@ char* recive_from_queue(long id_mensaje, int32_t flag) {
   return mensaje;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//								                          MD5
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*
+	Función que calcula el MD5
+	recorre el archivo del path seleccionado realizando el cálculo
+	Si el size pasado por parámetro es 0, significa que está levantando el archivo por primera vez
+		en ese casolo lee completamente
+	Si el size pasado por parámetro es un número positivo, es el límite que tiene que leer
+*//*
+char *get_MD5(char path[TAM], size_t size)
+{
+  FILE *file = fopen(path, "rb");
+
+  char buffer[TAM];
+  size_t bytes, bytes_read;
+
+  unsigned char c[MD5_DIGEST_LENGTH];
+  MD5_CTX md_context;
+
+  MD5_Init(&md_context);
+
+  if(size == 0)
+    {
+      while((bytes = fread(buffer, sizeof(char), sizeof(buffer), file)) != 0)
+        MD5_Update(&md_context, buffer, bytes);
+    }
+  else
+    {
+      bytes = 0;
+      while(bytes < size)
+        {
+          bytes_read = fread(buffer, sizeof(char), sizeof(buffer), file);
+          MD5_Update(&md_context, buffer, bytes_read);
+          bytes += bytes_read;
+        }
+    }
+
+  MD5_Final(c, &md_context);
+  fclose(file);
+
+  char *md5 = malloc(MD5_DIGEST_LENGTH * 2 + 1);
+
+  for(int32_t i = 0; i < MD5_DIGEST_LENGTH; i++)
+    sprintf(&md5[i*2], "%02x", (uint) c[i]);
+
+  return md5;
+}
+*/

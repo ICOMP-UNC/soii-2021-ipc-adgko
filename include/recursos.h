@@ -48,13 +48,6 @@
 #define KCYN  "\x1B[36m"	//cyan
 #define KWHT  "\x1B[37m"	//blanco
 
-typedef struct {
-  char fd[TAM];
-  char ip[TAM];
-  char puerto[TAM];
-  char conectado[TAM];
-} Cliente;
-
 /*
     Si no se declaran acá no las reconoce
 */
@@ -62,4 +55,21 @@ int32_t get_queue();
 int32_t send_to_queue(long, char [TAM] );
 char* recive_from_queue(long , int32_t );
 
-void impresion(char* mensaje, int codigo);
+
+/*
+    Estructura de los nodos de la lista
+*/
+struct lista { /* lista simple enlazada */
+  int32_t fd;
+  char* ip;
+  int32_t port;
+  struct lista *sig;
+};
+/*
+    funciones de lista
+*/
+int longitudl(struct lista *l);
+struct lista *creanodo(void);
+struct lista *insertafinal(struct lista *l, int32_t a,char* b,int32_t c);
+struct lista *elimina(struct lista *p, char* a,int32_t b);
+void ImprimirElementosLista (struct lista *a);

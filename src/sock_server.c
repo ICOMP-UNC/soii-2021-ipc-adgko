@@ -24,8 +24,14 @@ int32_t main( int argc, char *argv[] ) {
 	int32_t end_server = FALSE, compress_array = FALSE;
   	long unsigned int   nfds = 1, current_size = 0, i, j;
 	int32_t close_conn;
-
-
+	struct lista *clientes_conectados;
+	clientes_conectados = NULL;
+	struct lista *suscriptos1;
+	suscriptos1 = NULL;
+	struct lista *suscriptos2;
+	suscriptos2 = NULL;
+	struct lista *suscriptos3;
+	suscriptos3 = NULL;
 
 	if ( argc < 2 ) {
         	fprintf( stderr, "Uso: %s <puerto>\n", argv[0] );
@@ -207,10 +213,16 @@ int32_t main( int argc, char *argv[] ) {
 					/*
 						Avisa las nuevas conexiones y la suma a la estructura fds
 					*/
-					printf("  New incoming connection - %d\n",newsockfd );
+					printf("  New incoming connection - %d - socket %s:%d\n",newsockfd, inet_ntoa(cli_addr.sin_addr), cli_addr.sin_port );
 					fds[nfds].fd = newsockfd;
 					fds[nfds].events = POLLIN;
 					nfds++;
+
+					/*
+						Guarda los clientes conectados a la lista
+					*/
+					clientes_conectados = insertafinal(clientes_conectados,newsockfd,inet_ntoa(cli_addr.sin_addr), cli_addr.sin_port);
+
 
 
 				}while(newsockfd != -1);
@@ -218,52 +230,54 @@ int32_t main( int argc, char *argv[] ) {
 				
 
 			}else{
-				//printf("  Descriptor %d se conectó\n", fds[i].fd);
         		close_conn = FALSE;
 
+				//ImprimirElementosLista(clientes_conectados);
 				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 						mensaje = recive_from_queue((long)ID_PROD1,MSG_NOERROR | IPC_NOWAIT);
 						if(errno != ENOMSG){
-							//for(long unsigned int k1 = i; k1 < current_size; k1++){
+							for(long unsigned int k1 = i; k1 < current_size; k1++){
 								char respuesta[strlen(mensaje_prod1)+strlen(mensaje)];
 								sprintf(respuesta,"%s%s",mensaje_prod1,mensaje);
-								n = send( fds[i].fd, respuesta, strlen(respuesta),0 );
+							 n = send( fds[k1].fd, respuesta, strlen(respuesta),0 );
 									if(n < 0){
 										perror("fallo en enviar info");
 										//exit(1);
 									}
-								//}
+								}
 							}
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
 						mensaje = recive_from_queue((long)ID_PROD2,MSG_NOERROR | IPC_NOWAIT);
 						if(errno != ENOMSG){
-							//for(long unsigned int k2 = i; k2 < current_size; k2++){
+							for(long unsigned int k2 = i; k2 < current_size; k2++){
 								char respuesta[strlen(mensaje_prod1)+strlen(mensaje)];
 								sprintf(respuesta,"%s%s",mensaje_prod2,mensaje);
-								n = send( fds[i].fd, respuesta, strlen(respuesta),0 );
+								n = send( fds[k2].fd, respuesta, strlen(respuesta),0 );
 									if(n < 0){
 										perror("fallo en enviar info");
 										//exit(1);
 									}
-								//}
+								}
 
 							}
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
 						mensaje = recive_from_queue((long)ID_PROD3,MSG_NOERROR | IPC_NOWAIT);
 						if(errno != ENOMSG){						
-							//for(long unsigned int k3 = i; k3 < current_size; k3++){
+							for(long unsigned int k3 = i; k3 < current_size; k3++){
 								char respuesta[strlen(mensaje_prod1)+strlen(mensaje)];							
 								sprintf(respuesta,"%s%s",mensaje_prod3,mensaje);
-								n = send( fds[i].fd, respuesta, strlen(respuesta),0 );
+								n = send( fds[k3].fd, respuesta, strlen(respuesta),0 );
 								if(n < 0){
 									perror("fallo en enviar info");
 									//exit(1);
 									}
-								//}
+								}
 							}
+
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
-						mensaje = recive_from_queue((long)ID_CLI,MSG_NOERROR | IPC_NOWAIT);
+					/*	mensaje = recive_from_queue((long)ID_CLI,MSG_NOERROR | IPC_NOWAIT);
 						if(errno != ENOMSG){						
+							printf("Prueba 2\n");
 							mensaje[strlen(mensaje)-1]='\0'; //coloca un valor final al final del comando
 
 							//variables que usa para guardar comandos, opciones y argumentos
@@ -272,9 +286,10 @@ int32_t main( int argc, char *argv[] ) {
 							char socket[TAM];
 							char productor[TAM];
 
+						printf("Prueba 3\n");
 							//separa el comando en tokens para valuar
 							mensaje_comando = strtok(mensaje, " ");
-
+						printf("Prueba 4\n");
 							for(int32_t i=0; mensaje_comando != NULL; i++){
 								if(i == 0){
 									sprintf(comando, "%s", mensaje_comando);
@@ -288,13 +303,39 @@ int32_t main( int argc, char *argv[] ) {
 									
 								mensaje_comando = strtok(NULL," ");
 							}
+						printf("Prueba 5\n");
 
 							fflush(stdout);			//limpio el teclado o se va a pisar
 
 							printf(" %s %s %s\n", comando, socket, productor );
 
+							
+								//toma lo que puse en <socket> y lo separa en ip y puerto
+							
+							char* login;
+							login = strtok(socket,":");
+							char ip[strlen(login)];
+							sprintf(ip,"%s",login);
+							login = strtok(NULL,":");
+							char puerto[strlen(login)];
+							sprintf(puerto,"%s",login);
+
+							//printf("la ip es %s\n",ip);
+							//printf("el puerto es %s\n",puerto);							
+
 								if( strcmp("add", comando) == 0 ){
 									printf("estamos agregando\n");
+									if(strcmp("1",productor)){
+										struct lista *aux = clientes_conectados;
+										while(aux != NULL){
+											  if(((strcmp(aux->ip, ip) == 0) && aux->port == atoi(puerto))){
+												  suscriptos1 = insertafinal(suscriptos1,aux->fd,aux->ip, aux->port);
+												  printf("agregado %d %s %d",suscriptos1->fd,suscriptos1->ip,suscriptos1->port);
+												  break;
+											  }
+											  aux = aux->sig;
+										}
+									}
 								}
 								else if( strcmp("delete", comando) == 0 ){
 									printf("estamos borrando\n");
@@ -325,6 +366,13 @@ int32_t main( int argc, char *argv[] ) {
 			//////////////////////////////////
 				if(respuesta != NULL){}
 				if(buffer != NULL){}
+				if(suscriptos1 != NULL){}
+				if(suscriptos2 != NULL){}
+				if(suscriptos3 != NULL){}
+				if(mensaje_prod1 != NULL){}
+				if(mensaje_prod2 != NULL){}
+				if(mensaje_prod3 != NULL){}		
+				if(mensaje != NULL){}																														
 			//////////////////////////////////
 
 		} // acá termina el loop del poll
