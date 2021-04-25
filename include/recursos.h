@@ -21,8 +21,7 @@
 #define ID_PROD2    2
 #define ID_PROD3    3
 #define ID_CLI      4
-#define ID_FAIL_ADD 5
-#define ID_FAIL_DEL 5
+#define ID_CLI_RES 5
 
 /*
     Etiquetas para los colores de los mensajes
@@ -65,6 +64,10 @@ struct lista { /* lista simple enlazada */
   int32_t fd;
   char* ip;
   int32_t port;
+  int subs_1;
+  int subs_2;
+  int subs_3;
+  int desconectado;
   struct lista *sig;
 };
 /*
