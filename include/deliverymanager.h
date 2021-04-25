@@ -12,6 +12,7 @@
 #include <sys/ioctl.h> //para poner no bloqueante
 #include <sys/poll.h> 
 #include <arpa/inet.h>
+#include <signal.h>
 
 /*
     Paths de los binarios productores y CLI

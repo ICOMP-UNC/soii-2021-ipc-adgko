@@ -9,7 +9,7 @@
 */
 #define QUEUE_NAME 			"../archivos/queue"
 #define UNIQUE_KEY 			65
-#define PROJ_ID 			   0666
+#define PROJ_ID 			   0777                    //permisos para todos
 #define direccion_server 	"src/sock_server.c"
 
 /*

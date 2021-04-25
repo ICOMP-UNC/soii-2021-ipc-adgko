@@ -18,7 +18,7 @@ int32_t main(){
     while(1){
         numero = rand();
         sprintf(mensaje,"%s%d%s",primer_parte,numero,salto);
-        send_to_queue((long) ID_PROD1, &mensaje[0]);
+        //send_to_queue((long) ID_PROD1, &mensaje[0]);
         sleep(1/X);
     }
 }

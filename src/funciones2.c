@@ -35,6 +35,10 @@ struct lista *insertafinal(struct lista *l, int32_t a,char* b,int32_t c) {
   q->fd = a;      /* copiar los datos */
   q->ip = b;      /* copiar los datos */
   q->port = c;    /* copiar los datos */
+  q->subs_1 = 0;
+  q->subs_2 = 0;
+  q->subs_3 = 0;
+  q->desconectado = 0;      
   q->sig = NULL;
   if (l == NULL){
     return q;
