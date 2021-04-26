@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <zip.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #define TAM 1024
 
 /*
@@ -22,6 +26,14 @@
 #define ID_PROD3    3
 #define ID_CLI      4
 #define ID_CLI_RES 5
+
+/*
+    Etiquetas para los logs
+*/
+#define LOG_PROD_1 1
+#define LOG_PROD_2 2
+#define LOG_PROD_3 3
+#define LOG_CLI    4
 
 /*
     Etiquetas para los colores de los mensajes
@@ -49,6 +61,8 @@
 #define KCYN  "\x1B[36m"	//cyan
 #define KWHT  "\x1B[37m"	//blanco
 
+#define LOG_PATH "../archivos/logs"
+
 /*
     Si no se declaran acá no las reconoce
 */
@@ -70,6 +84,7 @@ struct lista { /* lista simple enlazada */
   int desconectado;
   struct lista *sig;
 };
+
 /*
     funciones de lista
 */
@@ -78,3 +93,5 @@ struct lista *creanodo(void);
 struct lista *insertafinal(struct lista *l, int32_t a,char* b,int32_t c);
 struct lista *elimina(struct lista *p, char* a,int32_t b);
 void ImprimirElementosLista (struct lista *a);
+
+void imprimir_log(int productor, char* mensaje,char* ip,int32_t puerto);

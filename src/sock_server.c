@@ -4,10 +4,10 @@
 	Programa Delivery Manager, para recibir lo que envíen los productores y enviarlo a los clientes
 	Emplea el socket dado en clase
 */
-
+/*
 static void signal_handler(void){
 	msgctl(get_queue(),IPC_RMID,(struct msqid_ds *) NULL);
-}
+}*/
 
 int32_t main( int argc, char *argv[] ) {
 	int32_t sockfd, newsockfd, puerto; 
@@ -33,7 +33,7 @@ int32_t main( int argc, char *argv[] ) {
 	clientes_conectados = NULL;
 	int32_t desconectado = 0;
 
-	atexit(signal_handler);
+/*	atexit(signal_handler);
     if (signal(SIGINT, signal_handler) == SIG_ERR) {
         fputs("Error al levantar el handler.\n", stderr);
         return EXIT_FAILURE;
@@ -41,7 +41,7 @@ int32_t main( int argc, char *argv[] ) {
 	if (raise(SIGINT) != 0) {
         fputs("Error al levantar la señal.\n", stderr);
         return EXIT_FAILURE;
-    }
+    }*/
 
 	if ( argc < 2 ) {
         	fprintf( stderr, "Uso: %s <puerto>\n", argv[0] );
@@ -252,7 +252,8 @@ int32_t main( int argc, char *argv[] ) {
 								n = send( aux->fd, respuesta, strlen(respuesta),0 );
 								if(n < 0){
 									perror("fallo en enviar info");
-								}			
+								}		
+								imprimir_log(LOG_PROD_1,respuesta,aux->ip,aux->port);	
 								aux = aux->sig;					 									
 							}			
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene				
@@ -262,12 +263,13 @@ int32_t main( int argc, char *argv[] ) {
 						if(errno != ENOMSG){
 							char respuesta[strlen(mensaje_prod2)+strlen(mensaje)];
 							sprintf(respuesta,"%s%s",mensaje_prod2,mensaje);					
-						//	struct lista *aux = suscriptos2;
+						//	struct lista *aux = clientes_conectados;
 						//	while(aux != NULL){
 						//		n = send( aux->fd, respuesta, strlen(respuesta),0 );
 						//		if(n < 0){
 						//			perror("fallo en enviar info");
 						//		}	
+						//		imprimir_log(LOG_PROD_2,respuesta,aux->ip,aux->port);	
 						//		aux = aux->sig;							
 						//	}
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
@@ -277,17 +279,17 @@ int32_t main( int argc, char *argv[] ) {
 						if(errno != ENOMSG){			
 							char respuesta[strlen(mensaje_prod3)+strlen(mensaje)];
 							sprintf(respuesta,"%s%s",mensaje_prod3,mensaje);						
-						//	struct lista *aux = suscriptos3;
+						//	struct lista *aux = clientes_conectados;
 						//	while(aux != NULL){
 						//		n = send( aux->fd, respuesta, strlen(respuesta),0 );
 						//		if(n < 0){
 						//			perror("fallo en enviar info");
-						//		}											
+						//		}	
+						//		imprimir_log(LOG_PROD_3,respuesta,aux->ip,aux->port);										
 						//		aux = aux->sig;				
 						//	}
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
 						}
-						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
 					
 						mensaje = recive_from_queue((long)ID_CLI,MSG_NOERROR | IPC_NOWAIT);
 						if(errno != ENOMSG){			
@@ -391,12 +393,12 @@ int32_t main( int argc, char *argv[] ) {
 									//	Envía al CLI el resultado, si se agregó o no
 									//
 									if(agregado == 0){
-										sprintf(respuesta,"No se detecta ese cliente para agregar\n");
+										sprintf(respuesta,"No se detecta cliente para agregar\n");    
 									}else{
 										sprintf(respuesta,"Cliente agregado con éxito\n");
 									}	
 
-
+								imprimir_log(LOG_CLI,respuesta,ip,atoi(puerto));
 								//
 								//	Si es delete, recorre la lista, busca el socket por ip y puerto
 								//	si lo encuentra, lo borra de la lista, cambiando el campo
@@ -437,14 +439,25 @@ int32_t main( int argc, char *argv[] ) {
 									}
 
 									if(borrado == 0){
-										sprintf(respuesta,"No se detecta ese cliente para borrar\n");
+										sprintf(respuesta,"No se detecta cliente para borrar\n");
 									}else{
 										sprintf(respuesta,"Cliente borrado con éxito\n");
 									}
-
+							imprimir_log(LOG_CLI,respuesta,ip,atoi(puerto));
 							}
 							else if( strcmp("log", comando) == 0 ){
 									printf("estamos logueando\n");
+									zip_t* z;
+									//zip_source_t* zs;
+									z = zip_open("log.zip", ZIP_CREATE, NULL);
+    								if(z == NULL){
+        								perror("Error al clear el archivo zip\n");
+        								exit(EXIT_FAILURE);
+    								}
+									//zip_walk(z, LOG_PATH);
+
+    								zip_close(z);
+
 							}else{
 									printf("estamos nose\n");
 							}
@@ -455,9 +468,10 @@ int32_t main( int argc, char *argv[] ) {
 								memset(socket,'\0',strlen(socket));
 								memset(productor,'\0',strlen(productor));	
 								memset(ip,'\0',strlen(ip));	
-								memset(puerto,'\0',strlen(puerto));																	
+								memset(puerto,'\0',strlen(puerto));		
+								memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene															
 						}
-						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
+						
 											
 				/////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 					
