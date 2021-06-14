@@ -9,6 +9,7 @@
 /* 
   Devuelve la longitud de una lista 
 */
+/*
 int longitudl(struct lista *l) {
   struct lista *p;
   int n;
@@ -19,7 +20,7 @@ int longitudl(struct lista *l) {
     p = p->sig;
   }
   return n;
-}
+}*/
 
 /*
     Crea el nodo principal que apunta al primer elemento de la lista
@@ -77,7 +78,7 @@ struct lista *elimina(struct lista *p, char* a,int32_t b) {
     return p;
   }
 }
-
+/*
 void ImprimirElementosLista (struct lista *a)
 {
 struct lista  *aux = a;
@@ -90,7 +91,7 @@ aux = aux->sig;
 if (aux == NULL)
 printf("\n\nSe ha llegado al final de la lista\n\n");
 } 
-
+*/
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                  LOG

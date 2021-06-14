@@ -46,7 +46,7 @@ int32_t main(){
 
         sprintf(buffer, "La carga es %f\n", load_avg[0]);
         //printf("%s",buffer);
-        //send_to_queue((long) ID_PROD3, &buffer[0]);
+        send_to_queue((long) ID_PROD3, &buffer[0]);
         sleep(1/Z);
     }
 
