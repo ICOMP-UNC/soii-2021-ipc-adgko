@@ -4,11 +4,14 @@
 	Programa Delivery Manager, para recibir lo que envíen los productores y enviarlo a los clientes
 	Emplea el socket dado en clase
 */
-/*
-static void signal_handler(void){
-	msgctl(get_queue(),IPC_RMID,(struct msqid_ds *) NULL);
-}*/
 
+//Cuando se produce la interrupción, cierra la cola de mensaje y sale del programa
+void signal_handler(void){
+	printf("Cerrando cola de mensajes\n");
+	msgctl(get_queue(),IPC_RMID,(struct msqid_ds *) NULL);
+	exit(1);
+}
+ #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 int32_t main( int argc, char *argv[] ) {
 	int32_t sockfd, newsockfd, puerto; 
     uint32_t clilen;
@@ -17,7 +20,7 @@ int32_t main( int argc, char *argv[] ) {
 	ssize_t n;
     int32_t pid_prod1, pid_prod2, pid_prod3, pid_cli;
 	char* mensaje; 											//lo que recibe de los productores
-	char* respuesta = malloc(sizeof(*respuesta));										//lo que envia al cliente
+	char* respuesta = malloc(sizeof(*respuesta));			//lo que envia al cliente
 
 	char* mensaje_prod1 = "Productor 1: ";					// etiqueta para ejecutar el binario del Productor 1								
 	char* mensaje_prod2 = "Productor 2: ";					// etiqueta para ejecutar el binario del Productor 2	
@@ -33,15 +36,12 @@ int32_t main( int argc, char *argv[] ) {
 	clientes_conectados = NULL;
 	int32_t desconectado = 0;
 
-/*	atexit(signal_handler);
-    if (signal(SIGINT, signal_handler) == SIG_ERR) {
+	atexit(signal_handler);										// Cuando el programa se termina, invoca a la función handler
+    if (signal(SIGINT, signal_handler) == SIG_ERR) {			// crea el signal, el cual llamara al handler en caso de ingresar Ctrl+C
         fputs("Error al levantar el handler.\n", stderr);
+		free(respuesta);
         return EXIT_FAILURE;
     }
-	if (raise(SIGINT) != 0) {
-        fputs("Error al levantar la señal.\n", stderr);
-        return EXIT_FAILURE;
-    }*/
 
 	if ( argc < 2 ) {
         	fprintf( stderr, "Uso: %s <puerto>\n", argv[0] );
