@@ -12,6 +12,7 @@ clean_logs:
 	echo " " > /home/diego/Escritorio/Sistemas-Operativos-2/TP1/soii-2021-ipc-adgko/archivos/logs/productor_1.log
 	echo " " > /home/diego/Escritorio/Sistemas-Operativos-2/TP1/soii-2021-ipc-adgko/archivos/logs/productor_2.log
 	echo " " > /home/diego/Escritorio/Sistemas-Operativos-2/TP1/soii-2021-ipc-adgko/archivos/logs/productor_3.log
+	echo " " > /home/diego/Escritorio/Sistemas-Operativos-2/TP1/soii-2021-ipc-adgko/archivos/logs/cli.log
 	
 check:
 	cppcheck $(FLAGS_CPP) ./
