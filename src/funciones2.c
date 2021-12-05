@@ -123,7 +123,7 @@ void imprimir_log(int productor, char* mensaje,char* ip,int32_t puerto)
 
     char log[TAM];
     sprintf(log, "%s | %s | %s | %s:%d \n", hora, propietario, mensaje,ip,puerto);
-    printf("%s", log);
+    //printf("%s", log);
 
     /*
       con el propietario, puedo hacer el log
