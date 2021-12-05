@@ -78,7 +78,7 @@ struct lista *elimina(struct lista *p, char* a,int32_t b) {
     return p;
   }
 }
-/*
+
 void ImprimirElementosLista (struct lista *a)
 {
 struct lista  *aux = a;
@@ -91,7 +91,7 @@ aux = aux->sig;
 if (aux == NULL)
 printf("\n\nSe ha llegado al final de la lista\n\n");
 } 
-*/
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                  LOG
@@ -122,7 +122,7 @@ void imprimir_log(int productor, char* mensaje,char* ip,int32_t puerto)
       sprintf(propietario, "err");
 
     char log[TAM];
-    sprintf(log, "%s | %s | %s | %s:%d", hora, propietario, mensaje,ip,puerto);
+    sprintf(log, "%s | %s | %s | %s:%d \n", hora, propietario, mensaje,ip,puerto);
     printf("%s", log);
 
     /*

@@ -29,7 +29,7 @@ int32_t main( int argc, char *argv[] ) {
 	int32_t rc, on = 1;
 	struct pollfd fds[MAX_CLIENTES]; 						//estructura para el poll()
 	int32_t timeout; 										//tiempo luego del cual el programa se cierra
-	int32_t end_server = FALSE, compress_array = FALSE;
+	int32_t  compress_array = FALSE;	//end_server = FALSE,
   	long unsigned int   nfds = 1, current_size = 0, i, j;
 	int32_t close_conn;
 	struct lista *clientes_conectados;
@@ -152,9 +152,9 @@ int32_t main( int argc, char *argv[] ) {
 	/*
 		Comienza a recibir conexiones y entregar mensajes
 	*/
-	do{
+	while(1){								// antes había do-while. Lo cambié porque quiero que se quede ejecutando siempre
 
-    	rc = poll(fds, nfds, timeout);
+    	rc = poll(fds, nfds, timeout); 
 		if (rc < 0)
     	{
       		perror(" Falló poll() ");
@@ -163,11 +163,12 @@ int32_t main( int argc, char *argv[] ) {
 		/*
 			Se fija si alguien se conectó antes de 3 minutos, sino se va a cerrar el programa
 		*/
+	/*
 		if (rc == 0)
 		{
 		printf(" TIEMPO! No hubo más conexiones y el Servidor se cierra. Que tenga un buen día\n");
 		break;
-		}
+		}*/
 
 		current_size = nfds; 					// cantidad de procesos esperando a ser atendidos
 		for (i = 0; i < current_size; i++){
@@ -184,10 +185,67 @@ int32_t main( int argc, char *argv[] ) {
 			if(fds[i].revents != POLLIN)
 			{
 				printf("  Error! revents = %d\n", fds[i].revents);
-				end_server = TRUE;
+				//end_server = TRUE;
 				break;
 
 			}
+			// mensaje del productor 1
+			mensaje = recive_from_queue((long)ID_PROD1,MSG_NOERROR | IPC_NOWAIT);
+						if(errno != ENOMSG){
+							char respuesta[strlen(mensaje_prod1)+strlen(mensaje)];
+							sprintf(respuesta,"%s%s",mensaje_prod1,mensaje);
+							struct lista *aux = clientes_conectados;
+							while(aux != NULL){
+								//if(aux->subs_1 == 1){
+								n = send( aux->fd, respuesta, strlen(respuesta),0 );
+								if(n < 0){
+									perror("fallo en enviar info");
+								}		
+								printf("%s\n",respuesta);
+								imprimir_log(LOG_PROD_1,respuesta,aux->ip,aux->port);	
+								//}
+								aux = aux->sig;					 									
+							}			
+						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene				
+						}
+
+						mensaje = recive_from_queue((long)ID_PROD2,MSG_NOERROR | IPC_NOWAIT);
+						if(errno != ENOMSG){
+							char respuesta[strlen(mensaje_prod2)+strlen(mensaje)];
+							sprintf(respuesta,"%s%s",mensaje_prod2,mensaje);					
+							struct lista *aux = clientes_conectados;
+							while(aux != NULL){
+								//if(aux->subs_2 == 1){
+								n = send( aux->fd, respuesta, strlen(respuesta),0 );
+								if(n < 0){
+									perror("fallo en enviar info");
+								}	
+								imprimir_log(LOG_PROD_2,respuesta,aux->ip,aux->port);	
+								//}
+								aux = aux->sig;							
+							}
+						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
+						}
+
+						mensaje = recive_from_queue((long)ID_PROD3,MSG_NOERROR | IPC_NOWAIT);
+						if(errno != ENOMSG){			
+							char respuesta[strlen(mensaje_prod3)+strlen(mensaje)];
+							sprintf(respuesta,"%s%s",mensaje_prod3,mensaje);						
+							struct lista *aux = clientes_conectados;
+							while(aux != NULL){
+								//if(aux->subs_3 == 1){
+								n = send( aux->fd, respuesta, strlen(respuesta),0 );
+								if(n < 0){
+									perror("fallo en enviar info");
+								}	
+								imprimir_log(LOG_PROD_3,respuesta,aux->ip,aux->port);										
+								//}
+								aux = aux->sig;				
+							}
+						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
+						}
+					
+//						mensaje = recive_from_queue((long)ID_CLI,MSG_NOERROR | IPC_NOWAIT);
 			
 			/*
 				Si el file descriptor es del delivery, atiende conexiones, 
@@ -241,64 +299,9 @@ int32_t main( int argc, char *argv[] ) {
         		close_conn = FALSE;
 
 
-				ImprimirElementosLista(clientes_conectados);
+				//ImprimirElementosLista(clientes_conectados);
 				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						mensaje = recive_from_queue((long)ID_PROD1,MSG_NOERROR | IPC_NOWAIT);
-						if(errno != ENOMSG){
-							char respuesta[strlen(mensaje_prod1)+strlen(mensaje)];
-							sprintf(respuesta,"%s%s",mensaje_prod1,mensaje);
-							struct lista *aux = clientes_conectados;
-							while(aux != NULL){
-								if(aux->subs_1 == 1){
-									printf("%d",aux->subs_1);
-								n = send( aux->fd, respuesta, strlen(respuesta),0 );
-								if(n < 0){
-									perror("fallo en enviar info");
-								}		
-								imprimir_log(LOG_PROD_1,respuesta,aux->ip,aux->port);	
-								aux = aux->sig;					 									
-								}
-							}			
-						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene				
-						}
-
-						mensaje = recive_from_queue((long)ID_PROD2,MSG_NOERROR | IPC_NOWAIT);
-						if(errno != ENOMSG){
-							char respuesta[strlen(mensaje_prod2)+strlen(mensaje)];
-							sprintf(respuesta,"%s%s",mensaje_prod2,mensaje);					
-							struct lista *aux = clientes_conectados;
-							if(aux->subs_2 == 1){
-							while(aux != NULL){
-								n = send( aux->fd, respuesta, strlen(respuesta),0 );
-								if(n < 0){
-									perror("fallo en enviar info");
-								}	
-								imprimir_log(LOG_PROD_2,respuesta,aux->ip,aux->port);	
-								aux = aux->sig;							
-								}
-							}
-						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
-						}
-
-						mensaje = recive_from_queue((long)ID_PROD3,MSG_NOERROR | IPC_NOWAIT);
-						if(errno != ENOMSG){			
-							char respuesta[strlen(mensaje_prod3)+strlen(mensaje)];
-							sprintf(respuesta,"%s%s",mensaje_prod3,mensaje);						
-							struct lista *aux = clientes_conectados;
-							if(aux->subs_3 == 1){
-							while(aux != NULL){
-								n = send( aux->fd, respuesta, strlen(respuesta),0 );
-								if(n < 0){
-									perror("fallo en enviar info");
-								}	
-								imprimir_log(LOG_PROD_3,respuesta,aux->ip,aux->port);										
-								aux = aux->sig;				
-								}
-							}
-						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
-						}
-					
-						mensaje = recive_from_queue((long)ID_CLI,MSG_NOERROR | IPC_NOWAIT);
+						
 /*						if(errno != ENOMSG){				
 							mensaje[strlen(mensaje)-1]='\0'; //coloca un valor final al final del comando
 
@@ -515,7 +518,7 @@ int32_t main( int argc, char *argv[] ) {
 		}
 		}
 
-	} while (end_server == FALSE); /* End of serving running.    */
+	}
 
 		/*
 			Cierra todos los sockets antes de cerrar el programa

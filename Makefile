@@ -6,6 +6,12 @@ all: check cliente server productores
 clean:
 	rm bin/*
 	rm -r html/ latex/
+	make clean_logs
+	
+clean_logs:
+	echo " " > /home/diego/Escritorio/Sistemas-Operativos-2/TP1/soii-2021-ipc-adgko/archivos/logs/productor_1.log
+	echo " " > /home/diego/Escritorio/Sistemas-Operativos-2/TP1/soii-2021-ipc-adgko/archivos/logs/productor_2.log
+	echo " " > /home/diego/Escritorio/Sistemas-Operativos-2/TP1/soii-2021-ipc-adgko/archivos/logs/productor_3.log
 	
 check:
 	cppcheck $(FLAGS_CPP) ./
@@ -16,6 +22,7 @@ cliente:
 server:
 	gcc  src/sock_server.c src/funciones1.c src/funciones2.c -o bin/DeliveryManager $(FLAGS_GCC)
 	gcc  src/cli.c src/funciones1.c -o bin/cli $(FLAGS_GCC)
+	gcc  src/sock_server_02.c src/funciones1.c src/funciones2.c -o bin/test_server $(FLAGS_GCC)
 	
 productores:
 	gcc src/productor1.c src/funciones1.c -o bin/prod1 $(FLAGS_GCC)
