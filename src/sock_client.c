@@ -39,8 +39,19 @@ int32_t main( int argc, char *argv[] ) {
 			  exit(1);
 			}
 			
-			//printf( "%sPROCESO %d. %s \n", KBLU, getpid(),KNRM );
-			printf( "%sRecibí: %s%s", KBLU,buffer,KNRM );
+			//char* token;
+			//token = strtok(buffer, " ");
+			//char hash[strlen(token)];
+			//sprintf(hash, "%s", token);
+			//printf("%s\n", hash);
+
+			//token = strtok(NULL, "\n");
+			//char mensaje[strlen(token)];
+			//sprintf(mensaje, "%s", token);
+			//printf("%s\n", mensaje);
+			
+
+			printf( "%sRecibí: %s%s\n", KBLU,buffer,KNRM );
 			
 			n = write( sockfd, "Obtuve su mensaje", 18 );
 			if ( n < 0 ) {
