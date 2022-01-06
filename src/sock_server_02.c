@@ -192,8 +192,11 @@ int32_t main( int argc, char *argv[] ) {
 			// mensaje del productor 1
 			mensaje = recive_from_queue((long)ID_PROD1,MSG_NOERROR | IPC_NOWAIT);
 						if(errno != ENOMSG){
-							char respuesta[strlen(mensaje_prod1)+strlen(mensaje)];
-							sprintf(respuesta,"%s%s",mensaje_prod1,mensaje);
+							char respuesta_aux[strlen(mensaje_prod1)+strlen(mensaje)];
+							sprintf(respuesta_aux,"%s%s",mensaje_prod1,mensaje);
+							char* hashmd5 = md5(respuesta_aux,(int)strlen(respuesta_aux));
+							char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
+							sprintf(respuesta,"%s %s",hashmd5,respuesta_aux);
 							struct lista *aux = clientes_conectados;
 							while(aux != NULL){
 								if(aux->subs_1 == 1){
@@ -208,10 +211,13 @@ int32_t main( int argc, char *argv[] ) {
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene				
 						}
 
-						mensaje = recive_from_queue((long)ID_PROD2,MSG_NOERROR | IPC_NOWAIT);
+			mensaje = recive_from_queue((long)ID_PROD2,MSG_NOERROR | IPC_NOWAIT);
 						if(errno != ENOMSG){
-							char respuesta[strlen(mensaje_prod2)+strlen(mensaje)];
-							sprintf(respuesta,"%s%s",mensaje_prod2,mensaje);					
+							char respuesta_aux[strlen(mensaje_prod2)+strlen(mensaje)];
+							sprintf(respuesta_aux,"%s%s",mensaje_prod2,mensaje);
+							char* hashmd5 = md5(respuesta_aux,(int)strlen(respuesta_aux));
+							char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
+							sprintf(respuesta,"%s %s",respuesta_aux,hashmd5);					
 							struct lista *aux = clientes_conectados;
 							while(aux != NULL){
 								if(aux->subs_2 == 1){
@@ -226,10 +232,13 @@ int32_t main( int argc, char *argv[] ) {
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
 						}
 
-						mensaje = recive_from_queue((long)ID_PROD3,MSG_NOERROR | IPC_NOWAIT);
+			mensaje = recive_from_queue((long)ID_PROD3,MSG_NOERROR | IPC_NOWAIT);
 						if(errno != ENOMSG){			
-							char respuesta[strlen(mensaje_prod3)+strlen(mensaje)];
-							sprintf(respuesta,"%s%s",mensaje_prod3,mensaje);						
+							char respuesta_aux[strlen(mensaje_prod3)+strlen(mensaje)];
+							sprintf(respuesta_aux,"%s%s",mensaje_prod3,mensaje);			
+							char* hashmd5 = md5(respuesta_aux,(int)strlen(respuesta_aux));
+							char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
+							sprintf(respuesta,"%s %s",respuesta_aux,hashmd5);			
 							struct lista *aux = clientes_conectados;
 							while(aux != NULL){
 								if(aux->subs_3 == 1){
@@ -245,7 +254,7 @@ int32_t main( int argc, char *argv[] ) {
 						}
 
 						// Mensajes desde CLI
-						mensaje = recive_from_queue((long)ID_CLI,MSG_NOERROR | IPC_NOWAIT);
+			mensaje = recive_from_queue((long)ID_CLI,MSG_NOERROR | IPC_NOWAIT);
 						if(errno != ENOMSG){				
 							mensaje[strlen(mensaje)-1]='\0'; //coloca un valor final al final del comando
 

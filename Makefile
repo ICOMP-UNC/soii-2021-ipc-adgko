@@ -1,4 +1,4 @@
-FLAGS_GCC = -std=gnu11 -Wall -Werror -pedantic -Wextra -Wconversion -g -lzip
+FLAGS_GCC = -std=gnu11 -Wall -Werror -pedantic -Wextra -Wconversion -g -lzip -lcrypto -lssl
 FLAGS_CPP = --enable=performance,portability,information,unusedFunction -q
 
 all: check cliente server productores
@@ -18,7 +18,7 @@ check:
 	cppcheck $(FLAGS_CPP) ./
 	
 cliente:
-	gcc  src/sock_client.c -o bin/client $(FLAGS_GCC)
+	gcc  src/sock_client.c src/funciones1.c -o bin/client $(FLAGS_GCC)
 	
 server:
 	gcc  src/sock_server.c src/funciones1.c src/funciones2.c -o bin/DeliveryManager $(FLAGS_GCC)
