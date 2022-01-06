@@ -60,48 +60,37 @@ char* recive_from_queue(long id_mensaje, int32_t flag) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*
-	Función que calcula el MD5
-	recorre el archivo del path seleccionado realizando el cálculo
-	Si el size pasado por parámetro es 0, significa que está levantando el archivo por primera vez
-		en ese casolo lee completamente
-	Si el size pasado por parámetro es un número positivo, es el límite que tiene que leer
-*//*
-char *get_MD5(char path[TAM], size_t size)
-{
-  FILE *file = fopen(path, "rb");
+	Función que calcula el MD5 de un mensaje
+  Le pasas a la función el char del mensaje y su tamaño y te devuelve el hash
 
-  char buffer[TAM];
-  size_t bytes, bytes_read;
-
-  unsigned char c[MD5_DIGEST_LENGTH];
-  MD5_CTX md_context;
-
-  MD5_Init(&md_context);
-
-  if(size == 0)
-    {
-      while((bytes = fread(buffer, sizeof(char), sizeof(buffer), file)) != 0)
-        MD5_Update(&md_context, buffer, bytes);
-    }
-  else
-    {
-      bytes = 0;
-      while(bytes < size)
-        {
-          bytes_read = fread(buffer, sizeof(char), sizeof(buffer), file);
-          MD5_Update(&md_context, buffer, bytes_read);
-          bytes += bytes_read;
-        }
-    }
-
-  MD5_Final(c, &md_context);
-  fclose(file);
-
-  char *md5 = malloc(MD5_DIGEST_LENGTH * 2 + 1);
-
-  for(int32_t i = 0; i < MD5_DIGEST_LENGTH; i++)
-    sprintf(&md5[i*2], "%02x", (uint) c[i]);
-
-  return md5;
-}
+  La función  la tomé de https://github.com/cjtrowbridge/md5-crack-2/blob y la adapté 
 */
+
+char *md5(const char *str, int length) {
+    int n;
+    MD5_CTX c;
+    unsigned char digest[MD5_DIGEST_LENGTH];
+    char *out = (char*)malloc(MD5_DIGEST_LENGTH * 2 + 1);
+
+    MD5_Init(&c);
+
+    while (length > 0) {
+        if (length > 512) {
+            MD5_Update(&c, str, 512);
+        } else {
+            MD5_Update(&c, str, (size_t)length);
+        }
+        length -= 512;
+        str += 512;
+    }
+
+    MD5_Final(digest, &c);
+
+    for (n = 0; n < MD5_DIGEST_LENGTH; ++n) {
+        snprintf(&(out[n*2]), MD5_DIGEST_LENGTH*2, "%02x", (unsigned int)digest[n]);
+    }
+
+    out[MD5_DIGEST_LENGTH * 2] = '\0';
+
+    return out;
+}
