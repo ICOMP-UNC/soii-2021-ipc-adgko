@@ -58,3 +58,6 @@ bin/
 
 #vscode
 .vscode/*
+
+#logs
+.log
