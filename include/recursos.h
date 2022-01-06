@@ -95,3 +95,9 @@ struct lista *elimina(struct lista *p, char* a,int32_t b);
 void ImprimirElementosLista (struct lista *a);
 
 void imprimir_log(int productor, char* mensaje,char* ip,int32_t puerto);
+
+/*
+    MD5
+*/
+
+char *md5(const char*, int);
