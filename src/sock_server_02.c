@@ -1,5 +1,7 @@
 #include "../include/deliverymanager.h"
 
+struct pollfd fds[MAX_CLIENTES]; 						//estructura para el poll()
+long unsigned int   nfds = 1,i;
 /*
 	Programa Delivery Manager, para recibir lo que envíen los productores y enviarlo a los clientes
 	Emplea el socket dado en clase
@@ -7,8 +9,16 @@
 
 //Cuando se produce la interrupción, cierra la cola de mensaje y sale del programa
 void signal_handler(void){
+
 	printf("Cerrando cola de mensajes\n");
 	msgctl(get_queue(),IPC_RMID,(struct msqid_ds *) NULL);
+
+	for ( i = 0; i < nfds; i++)
+		{
+			if(fds[i].fd >= 0)
+			close(fds[i].fd);
+		}
+
 	exit(1);
 }
  #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
@@ -27,10 +37,11 @@ int32_t main( int argc, char *argv[] ) {
 	char* mensaje_prod3 = "Productor 3: ";					// etiqueta para ejecutar el binario del Productor 3	
 
 	int32_t rc, on = 1;
-	struct pollfd fds[MAX_CLIENTES]; 						//estructura para el poll()
+	//struct pollfd fds[MAX_CLIENTES]; 						//estructura para el poll()
 	int32_t timeout; 										//tiempo luego del cual el programa se cierra
 	int32_t  compress_array = FALSE;	//end_server = FALSE,
-  	long unsigned int   nfds = 1, current_size = 0, i, j;
+  	//long unsigned int   nfds = 1, current_size = 0, i, j;
+	long unsigned int current_size = 0, j;
 	int32_t close_conn;
 	struct lista *clientes_conectados;
 	clientes_conectados = NULL;
