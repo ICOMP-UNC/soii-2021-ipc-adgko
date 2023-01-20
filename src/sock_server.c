@@ -29,7 +29,7 @@ int32_t main( int argc, char *argv[] ) {
 	int32_t rc, on = 1;
 	struct pollfd fds[MAX_CLIENTES]; 						//estructura para el poll()
 	int32_t timeout; 										//tiempo luego del cual el programa se cierra
-	int32_t end_server = FALSE, compress_array = FALSE;
+	int32_t  compress_array = FALSE;	//end_server = FALSE,
   	long unsigned int   nfds = 1, current_size = 0, i, j;
 	int32_t close_conn;
 	struct lista *clientes_conectados;
@@ -152,9 +152,9 @@ int32_t main( int argc, char *argv[] ) {
 	/*
 		Comienza a recibir conexiones y entregar mensajes
 	*/
-	do{
+	while(1){								// antes había do-while. Lo cambié porque quiero que se quede ejecutando siempre
 
-    	rc = poll(fds, nfds, timeout);
+    	rc = poll(fds, nfds, timeout); 
 		if (rc < 0)
     	{
       		perror(" Falló poll() ");
@@ -163,11 +163,12 @@ int32_t main( int argc, char *argv[] ) {
 		/*
 			Se fija si alguien se conectó antes de 3 minutos, sino se va a cerrar el programa
 		*/
+	/*
 		if (rc == 0)
 		{
 		printf(" TIEMPO! No hubo más conexiones y el Servidor se cierra. Que tenga un buen día\n");
 		break;
-		}
+		}*/
 
 		current_size = nfds; 					// cantidad de procesos esperando a ser atendidos
 		for (i = 0; i < current_size; i++){
@@ -184,10 +185,227 @@ int32_t main( int argc, char *argv[] ) {
 			if(fds[i].revents != POLLIN)
 			{
 				printf("  Error! revents = %d\n", fds[i].revents);
-				end_server = TRUE;
+				//end_server = TRUE;
 				break;
 
 			}
+			// mensaje del productor 1
+			mensaje = recive_from_queue((long)ID_PROD1,MSG_NOERROR | IPC_NOWAIT);
+						if(errno != ENOMSG){
+							char respuesta_aux[strlen(mensaje_prod1)+strlen(mensaje)];
+							sprintf(respuesta_aux,"%s%s",mensaje_prod1,mensaje);
+							char* hashmd5 = md5(respuesta_aux,(int)strlen(respuesta_aux));
+							char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
+							sprintf(respuesta,"%s %s",hashmd5,respuesta_aux);
+							struct lista *aux = clientes_conectados;
+							while(aux != NULL){
+								if(aux->subs_1 == 1){
+									n = send( aux->fd, respuesta, strlen(respuesta),0 );
+									if(n < 0){
+										perror("fallo en enviar info");
+									}		
+									imprimir_log(LOG_PROD_1,respuesta,aux->ip,aux->port);	
+								}
+								aux = aux->sig;					 									
+							}			
+						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene				
+						}
+
+			mensaje = recive_from_queue((long)ID_PROD2,MSG_NOERROR | IPC_NOWAIT);
+						if(errno != ENOMSG){
+							char respuesta_aux[strlen(mensaje_prod2)+strlen(mensaje)];
+							sprintf(respuesta_aux,"%s%s",mensaje_prod2,mensaje);
+							char* hashmd5 = md5(respuesta_aux,(int)strlen(respuesta_aux));
+							char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
+							sprintf(respuesta,"%s %s",respuesta_aux,hashmd5);					
+							struct lista *aux = clientes_conectados;
+							while(aux != NULL){
+								if(aux->subs_2 == 1){
+									n = send( aux->fd, respuesta, strlen(respuesta),0 );
+									if(n < 0){
+										perror("fallo en enviar info");
+									}	
+									imprimir_log(LOG_PROD_2,respuesta,aux->ip,aux->port);	
+									}
+								aux = aux->sig;							
+							}
+						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
+						}
+
+			mensaje = recive_from_queue((long)ID_PROD3,MSG_NOERROR | IPC_NOWAIT);
+						if(errno != ENOMSG){			
+							char respuesta_aux[strlen(mensaje_prod3)+strlen(mensaje)];
+							sprintf(respuesta_aux,"%s%s",mensaje_prod3,mensaje);			
+							char* hashmd5 = md5(respuesta_aux,(int)strlen(respuesta_aux));
+							char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
+							sprintf(respuesta,"%s %s",respuesta_aux,hashmd5);			
+							struct lista *aux = clientes_conectados;
+							while(aux != NULL){
+								if(aux->subs_3 == 1){
+									n = send( aux->fd, respuesta, strlen(respuesta),0 );
+									if(n < 0){
+										perror("fallo en enviar info");
+									}	
+									imprimir_log(LOG_PROD_3,respuesta,aux->ip,aux->port);										
+									}
+								aux = aux->sig;				
+							}
+						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
+						}
+
+						// Mensajes desde CLI
+			mensaje = recive_from_queue((long)ID_CLI,MSG_NOERROR | IPC_NOWAIT);
+						if(errno != ENOMSG){				
+							mensaje[strlen(mensaje)-1]='\0'; //coloca un valor final al final del comando
+
+							//variables que usa para guardar comandos, opciones y argumentos
+							char* mensaje_comando;
+							char comando[TAM];
+							char socket[TAM];
+							char productor[TAM];
+
+							//separa el comando en tokens para valuar
+							mensaje_comando = strtok(mensaje, " ");
+							for(int32_t i=0; mensaje_comando != NULL; i++){
+								if(i == 0){
+									sprintf(comando, "%s", mensaje_comando);
+								}
+								else if(i == 1){
+									sprintf(socket,"%s", mensaje_comando);
+								}
+								else {
+									sprintf(productor,"%s",mensaje_comando);
+								}
+									
+								mensaje_comando = strtok(NULL," ");
+							}
+							fflush(stdout);			//limpio el teclado o se va a pisar
+							
+							//toma lo que puse en <socket> y lo separa en ip y puerto	
+							char* login;			
+							login = strtok(socket,":");
+							char ip[strlen(login)];
+							if(ip == NULL){
+								perror("Fallo en alocar memoria en ip\n");
+							}
+							sprintf(ip,"%s",login);
+
+							login = strtok(NULL,":");
+							char puerto[strlen(login)];								
+							if(puerto == NULL){
+								perror("Fallo en alocar memoria en puerto\n");
+							}												
+							sprintf(puerto,"%s",login);
+							
+							//printf("La ip es %s\n",ip);
+							//printf("Elpuerto es %s\n",puerto);																					
+
+							//
+							//	Valida el comando
+							//
+							
+							//
+							//	Si es add, 
+							//	recorre la lista comparando ip y puerto, cuando lo encuentra, 
+							//	dependiendo que productor es, agrega a la lista 
+							//	de suscriptos colocando en 1 el campo subs_# 
+							//
+							if( strcmp("add", comando) == 0 ){
+									struct lista *aux = clientes_conectados;
+									int agregado = 0;		
+									while(aux != NULL){
+										if(strcmp(aux->ip,ip) == 0 && aux->port == atoi(puerto)){
+											if(strcmp(productor,"1") == 0){
+												aux->subs_1 = 1;
+											}
+											else if(strcmp(productor,"2") == 0){
+												aux->subs_2 = 1;
+											}
+											else if(strcmp(productor,"3") == 0){
+												aux->subs_3 = 1;
+											}
+											agregado = 1;
+										}
+										aux = aux->sig;
+									}
+
+									//
+									//	Envía al CLI el resultado, si se agregó o no
+									//
+									if(agregado == 0){
+										sprintf(respuesta,"No se detecta cliente para agregar\n");    
+									}else{
+										sprintf(respuesta,"Cliente agregado con éxito\n");
+									}	
+
+								imprimir_log(LOG_CLI,respuesta,ip,atoi(puerto));
+								
+								
+							}
+							//	Si es delete, 
+							//	recorre la lista comparando ip y puerto, cuando lo encuentra, 
+							//	dependiendo que productor es, agrega a la lista 
+							//	de suscriptos colocando en 0 el campo subs_# 
+							//
+							else if( strcmp("delete", comando) == 0 ){
+									struct lista *aux = clientes_conectados;
+									int eliminado = 0;		
+									while(aux != NULL){
+										if(strcmp(aux->ip,ip) == 0 && aux->port == atoi(puerto)){
+											if(strcmp(productor,"1") == 0){
+												aux->subs_1 = 0;
+											}
+											else if(strcmp(productor,"2") == 0){
+												aux->subs_2 = 0;
+											}
+											else if(strcmp(productor,"3") == 0){
+												aux->subs_3 = 0;
+											}
+											eliminado = 1;
+										}
+										aux = aux->sig;
+										//
+										//	Envía al CLI el resultado, si se agregó o no
+										//
+										if(eliminado == 0){
+											sprintf(respuesta,"No se detecta cliente para eliminar\n");    
+										}else{
+											sprintf(respuesta,"Cliente eliminado con éxito\n");
+										}
+										
+									}
+									imprimir_log(LOG_CLI,respuesta,ip,atoi(puerto));
+							}
+
+							else if( strcmp("log", comando) == 0 ){
+									printf("estamos logueando\n");
+									zip_t* z;
+									//zip_source_t* zs;
+									z = zip_open("log.zip", ZIP_CREATE, NULL);
+    								if(z == NULL){
+        								perror("Error al clear el archivo zip\n");
+        								exit(EXIT_FAILURE);
+    								}
+									//zip_walk(z, LOG_PATH);
+
+    								zip_close(z);
+
+							}else{
+									printf("estamos nose\n");
+							}
+								//
+								//	limpio las variables o se llenan de datos anteriores
+								//
+								memset(comando,'\0',strlen(comando));
+								memset(socket,'\0',strlen(socket));
+								memset(productor,'\0',strlen(productor));	
+								memset(ip,'\0',strlen(ip));	
+								memset(puerto,'\0',strlen(puerto));		
+								memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene															
+						}
+						
+											
+				/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			
 			/*
 				Si el file descriptor es del delivery, atiende conexiones, 
@@ -241,239 +459,10 @@ int32_t main( int argc, char *argv[] ) {
         		close_conn = FALSE;
 
 
-				ImprimirElementosLista(clientes_conectados);
+				//ImprimirElementosLista(clientes_conectados);
 				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						mensaje = recive_from_queue((long)ID_PROD1,MSG_NOERROR | IPC_NOWAIT);
-						if(errno != ENOMSG){
-							char respuesta[strlen(mensaje_prod1)+strlen(mensaje)];
-							sprintf(respuesta,"%s%s",mensaje_prod1,mensaje);
-							struct lista *aux = clientes_conectados;
-							while(aux != NULL){
-								if(aux->subs_1 == 1){
-									printf("%d",aux->subs_1);
-								n = send( aux->fd, respuesta, strlen(respuesta),0 );
-								if(n < 0){
-									perror("fallo en enviar info");
-								}		
-								imprimir_log(LOG_PROD_1,respuesta,aux->ip,aux->port);	
-								aux = aux->sig;					 									
-								}
-							}			
-						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene				
-						}
-
-						mensaje = recive_from_queue((long)ID_PROD2,MSG_NOERROR | IPC_NOWAIT);
-						if(errno != ENOMSG){
-							char respuesta[strlen(mensaje_prod2)+strlen(mensaje)];
-							sprintf(respuesta,"%s%s",mensaje_prod2,mensaje);					
-							struct lista *aux = clientes_conectados;
-							if(aux->subs_2 == 1){
-							while(aux != NULL){
-								n = send( aux->fd, respuesta, strlen(respuesta),0 );
-								if(n < 0){
-									perror("fallo en enviar info");
-								}	
-								imprimir_log(LOG_PROD_2,respuesta,aux->ip,aux->port);	
-								aux = aux->sig;							
-								}
-							}
-						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
-						}
-
-						mensaje = recive_from_queue((long)ID_PROD3,MSG_NOERROR | IPC_NOWAIT);
-						if(errno != ENOMSG){			
-							char respuesta[strlen(mensaje_prod3)+strlen(mensaje)];
-							sprintf(respuesta,"%s%s",mensaje_prod3,mensaje);						
-							struct lista *aux = clientes_conectados;
-							if(aux->subs_3 == 1){
-							while(aux != NULL){
-								n = send( aux->fd, respuesta, strlen(respuesta),0 );
-								if(n < 0){
-									perror("fallo en enviar info");
-								}	
-								imprimir_log(LOG_PROD_3,respuesta,aux->ip,aux->port);										
-								aux = aux->sig;				
-								}
-							}
-						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
-						}
-					
-						mensaje = recive_from_queue((long)ID_CLI,MSG_NOERROR | IPC_NOWAIT);
-/*						if(errno != ENOMSG){				
-							mensaje[strlen(mensaje)-1]='\0'; //coloca un valor final al final del comando
-
-							//variables que usa para guardar comandos, opciones y argumentos
-							char* mensaje_comando;
-							char comando[TAM];
-							char socket[TAM];
-							char productor[TAM];
-
-							//separa el comando en tokens para valuar
-							mensaje_comando = strtok(mensaje, " ");
-							for(int32_t i=0; mensaje_comando != NULL; i++){
-								if(i == 0){
-									sprintf(comando, "%s", mensaje_comando);
-								}
-								else if(i == 1){
-									sprintf(socket,"%s", mensaje_comando);
-								}
-								else {
-									sprintf(productor,"%s",mensaje_comando);
-								}
-									
-								mensaje_comando = strtok(NULL," ");
-							}
-							fflush(stdout);			//limpio el teclado o se va a pisar
-
-							//printf(" %s %s %s\n", comando, socket, productor );
-
-							
-							//toma lo que puse en <socket> y lo separa en ip y puerto	
-							char* login;			
-							login = strtok(socket,":");
-							char ip[strlen(login)];
-							if(ip == NULL){
-								perror("Fallo en alocar memoria en ip\n");
-							}
-							sprintf(ip,"%s",login);
-							login = strtok(NULL,":");
-							char puerto[strlen(login)];								
-							if(puerto == NULL){
-								perror("Fallo en alocar memoria en puerto\n");
-							}												
-							sprintf(puerto,"%s",login);
-							printf("La ip es %s",ip);
-							printf("Elpuerto es %s",puerto);																					
-
-							//
-							//	Valida el comando
-							//
-							
-							//
-							//	Si es add, se fija en el productor
-							//	recorre la lista comparando ip y puerto, cuando lo encuentra, agrega a la lista 
-							//	de suscriptos colocando en 1 el campo subs_# 
-							//
-							if( strcmp("add", comando) == 0 ){
-									struct lista *aux = clientes_conectados;
-									int agregado = 0;								
-									if(strcmp("1",productor)){
-										while(aux != NULL){
-											printf("viendo\n");
-											if(((strcmp(aux->ip, ip) == 0) && aux->port == atoi(puerto))){
-												aux->subs_1 = 1;
-												agregado = 1;
-												break;
-											}
-											aux = aux->sig;
-										}
-									}
-									if(strcmp("2",productor)){
-										while(aux != NULL){
-											if(((strcmp(aux->ip, ip) == 0) && aux->port == atoi(puerto))){
-												aux->subs_2 = 1;
-												agregado = 1;
-												break;
-											}
-											aux = aux->sig;
-										}
-									}
-									if(strcmp("3",productor)){
-										while(aux != NULL){
-											if(((strcmp(aux->ip, ip) == 0) && aux->port == atoi(puerto))){
-												aux->subs_3 = 1;
-												agregado = 1;
-												break;
-											}
-											aux = aux->sig;
-										}
-									}
-
-									//
-									//	Envía al CLI el resultado, si se agregó o no
-									//
-									if(agregado == 0){
-										sprintf(respuesta,"No se detecta cliente para agregar\n");    
-									}else{
-										sprintf(respuesta,"Cliente agregado con éxito\n");
-									}	
-
-								imprimir_log(LOG_CLI,respuesta,ip,atoi(puerto));
-								//
-								//	Si es delete, recorre la lista, busca el socket por ip y puerto
-								//	si lo encuentra, lo borra de la lista, cambiando el campo
-								//	subs_# por 0
-							}
-							else if( strcmp("delete", comando) == 0 ){
-									struct lista *aux = clientes_conectados;
-									int borrado = 0;
-									if(strcmp("1",productor)){
-										while(aux != NULL){
-											if(((strcmp(aux->ip, ip) == 0) && aux->port == atoi(puerto))){
-												aux->subs_1 = 0;
-												borrado = 1;
-												break;
-											}
-											aux = aux->sig;
-										}
-									}
-									if(strcmp("2",productor)){									
-										while(aux != NULL){
-											if(((strcmp(aux->ip, ip) == 0) && aux->port == atoi(puerto))){
-												aux->subs_2 = 0;
-												borrado = 1;
-												break;
-											}
-											aux = aux->sig;
-										}
-									}
-									if(strcmp("3",productor)){									
-										while(aux != NULL){
-											if(((strcmp(aux->ip, ip) == 0) && aux->port == atoi(puerto))){
-												aux->subs_3 = 0;
-												borrado = 1;
-												break;
-											}
-											aux = aux->sig;
-										}
-									}
-
-									if(borrado == 0){
-										sprintf(respuesta,"No se detecta cliente para borrar\n");
-									}else{
-										sprintf(respuesta,"Cliente borrado con éxito\n");
-									}
-							imprimir_log(LOG_CLI,respuesta,ip,atoi(puerto));
-							}
-							else if( strcmp("log", comando) == 0 ){
-									printf("estamos logueando\n");
-									zip_t* z;
-									//zip_source_t* zs;
-									z = zip_open("log.zip", ZIP_CREATE, NULL);
-    								if(z == NULL){
-        								perror("Error al clear el archivo zip\n");
-        								exit(EXIT_FAILURE);
-    								}
-									//zip_walk(z, LOG_PATH);
-
-    								zip_close(z);
-
-							}else{
-									printf("estamos nose\n");
-							}
-								//
-								//	limpio las variables o se llenan de datos anteriores
-								//
-								memset(comando,'\0',strlen(comando));
-								memset(socket,'\0',strlen(socket));
-								memset(productor,'\0',strlen(productor));	
-								memset(ip,'\0',strlen(ip));	
-								memset(puerto,'\0',strlen(puerto));		
-								memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene															
-						}
 						
-											
-				/////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
 					/*
 						Cierrra todas las conexiones 
 					*/
@@ -515,7 +504,7 @@ int32_t main( int argc, char *argv[] ) {
 		}
 		}
 
-	} while (end_server == FALSE); /* End of serving running.    */
+	}
 
 		/*
 			Cierra todos los sockets antes de cerrar el programa
