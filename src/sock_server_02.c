@@ -389,17 +389,9 @@ int32_t main( int argc, char *argv[] ) {
 							}
 
 							else if( strcmp("log", comando) == 0 ){
-									printf("estamos logueando\n");
-									zip_t* z;
-									//zip_source_t* zs;
-									z = zip_open("log.zip", ZIP_CREATE, NULL);
-    								if(z == NULL){
-        								perror("Error al clear el archivo zip\n");
-        								exit(EXIT_FAILURE);
-    								}
-									//zip_walk(z, LOG_PATH);
+								printf("estamos logueando\n");
+									zipear();
 
-    								zip_close(z);
 
 							}else{
 									printf("estamos nose\n");
@@ -529,3 +521,4 @@ int32_t main( int argc, char *argv[] ) {
 	return 0; 
  
 }
+

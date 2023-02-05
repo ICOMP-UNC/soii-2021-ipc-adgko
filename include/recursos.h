@@ -63,13 +63,17 @@
 
 #define LOG_PATH "../archivos/logs"
 
+#define LOG_PATH_1 "../archivos/logs/productor_1.log"
+#define LOG_PATH_2 "../archivos/logs/productor_2.log"
+#define LOG_PATH_3 "../archivos/logs/productor_3.log"
+#define LOG_PATH_log "../archivos/logs/cli.log"
+
 /*
     Si no se declaran acá no las reconoce
 */
 int32_t get_queue();
 int32_t send_to_queue(long, char [TAM] );
 char* recive_from_queue(long , int32_t );
-
 
 /*
     Estructura de los nodos de la lista
@@ -95,9 +99,12 @@ struct lista *elimina(struct lista *p, char* a,int32_t b);
 void ImprimirElementosLista (struct lista *a);
 
 void imprimir_log(int productor, char* mensaje,char* ip,int32_t puerto);
+void zipear();
 
 /*
     MD5
 */
 
 char *md5(const char*, int);
+
+//void zip_walk(struct zip_t*, const char*);

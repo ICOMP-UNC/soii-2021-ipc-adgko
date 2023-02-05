@@ -1,11 +1,19 @@
 #include "../include/cliente.h"
 
+int32_t sockfd, puerto;
+
+void signal_handler(void){
+	printf("cerrando conexión\n");
+	close(sockfd);
+	exit(1);
+}
 
 /*
 	Función que se conecta al Delivery Managment vía socket y recibe mensajes
 */
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 int32_t main( int argc, char *argv[] ) {
-	int32_t sockfd, puerto;
+	
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
     ssize_t n;
@@ -29,6 +37,11 @@ int32_t main( int argc, char *argv[] ) {
 		perror( "conexion" );
 		exit( 1 );
 	}
+
+	if (signal(SIGINT, signal_handler) == SIG_ERR) {			// crea el signal, el cual llamara al handler en caso de ingresar Ctrl+C
+        fputs("Error al levantar el handler.\n", stderr);
+        return EXIT_FAILURE;
+    }
 
 		while(1) {
 			memset( buffer, 0, TAM );

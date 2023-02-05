@@ -2,6 +2,7 @@
 #include <time.h>
 
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                  LISTAS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +79,7 @@ struct lista *elimina(struct lista *p, char* a,int32_t b) {
     return p;
   }
 }
-
+/*
 void ImprimirElementosLista (struct lista *a)
 {
 struct lista  *aux = a;
@@ -90,7 +91,7 @@ aux = aux->sig;
 }
 if (aux == NULL)
 printf("\n\nSe ha llegado al final de la lista\n\n");
-} 
+} */
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,35 +158,97 @@ void get_time(char * tiempo)
   	 tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
   }
 
+
+
 /*
   función tomada de la documentación suministrada por la cátedra de libzip
   esta función toma un directorio, recursivamente lo va comprimiendo y lo guarda en un archivo
+  se emplean las funciones zip_source_buffer y zip_file_add de la librería zip.h
+*/
+void zipear(){
 
-  void zip_walk(struct zip_t *zip, const char *path) {
-    DIR *dir;
-    struct dirent *entry;
-    char fullpath[TAM];
-    struct stat s;
+// definiciones
+//necesario para abrir logs y meterlos en el ZIP
+	FILE* zlog1 = fopen(LOG_PATH_1, "r");
+  FILE* zlog2 = fopen(LOG_PATH_2, "r");
+  FILE* zlog3 = fopen(LOG_PATH_3, "r");
+//  FILE* zlogcli = fopen(LOG_PATH_log, "r");
+	char* buffer1 = NULL;
+  char* buffer2 = NULL;
+  char* buffer3 = NULL;
 
-    memset(fullpath, 0, TAM);
-    dir = opendir(path);
-    assert(dir);
+	long int size1 = 0;
+  long int size2 = 0;
+  long int size3 = 0;
 
-    while ((entry = readdir(dir))) {
-      // skip "." and ".."
-      if (!strcmp(entry->d_name, ".\0") || !strcmp(entry->d_name, "..\0"))
-        continue;
+	
+  //leer los archivos para obtener los tamaños para buffers
 
-      snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name);
-      stat(fullpath, &s);
-      if (S_ISDIR(s.st_mode))
-        zip_walk(zip, fullpath);
-      else {
-        zip_entry_open(zip, fullpath);
-        zip_entry_fwrite(zip, fullpath);
-        zip_entry_close(zip);
-      }
-    }
+	rewind(zlog1);
+	fseek(zlog1, 0, SEEK_END);
+	size1 = ftell(zlog1);
 
-    closedir(dir);
-}*/
+  rewind(zlog2);
+	fseek(zlog2, 0, SEEK_END);
+	size2 = ftell(zlog2);
+
+  rewind(zlog3);
+	fseek(zlog3, 0, SEEK_END);
+	size3 = ftell(zlog3);
+
+  //armo el primer buffer a escribir y después le sumo el resto
+	rewind(zlog1);
+	buffer1 = malloc(((long unsigned int)size1 + 1) * sizeof(buffer1));
+	fread(buffer1, (long unsigned int)size1, 1, zlog1);
+	buffer1[size1] = '\0';
+	//printf("%s", buffer1);
+
+  //creo un zip donde guardar todo
+	int err = 0;
+	zip_t* z = zip_open("log.zip", ZIP_CREATE, &err);
+	if(z == NULL){
+		perror("Error al clear el archivo zip\n");
+		exit(EXIT_FAILURE);
+	}
+  //agrego el log del productor 1
+	zip_source_t* zs1;
+	zs1 = zip_source_buffer(z, buffer1, strlen(buffer1), 0);
+	zip_file_add(z, LOG_PATH_1, zs1, ZIP_FL_OVERWRITE | ZIP_FL_ENC_UTF_8);
+
+  //leo y agrego el log del productor 2
+  rewind(zlog2);
+	buffer2 = malloc(((long unsigned int)size2 + 1) * sizeof(buffer2));
+	fread(buffer2, (long unsigned int)size2, 1, zlog2);
+  buffer2[size2] = '\0';
+	//printf("%s", buffer2);
+  zip_source_t* zs2;
+	zs2 = zip_source_buffer(z, buffer2, strlen(buffer2), 0);
+	zip_file_add(z, LOG_PATH_2, zs2, ZIP_FL_OVERWRITE |ZIP_FL_ENC_UTF_8);
+
+  //leo y agrego el log del productor 3
+  rewind(zlog3);
+	buffer3 = malloc(((long unsigned int)size3 + 1) * sizeof(buffer3));
+	fread(buffer3, (long unsigned int)size3, 1, zlog3);
+  buffer3[size3] = '\0';
+	//printf("%s", buffer3);
+  zip_source_t* zs3;
+	zs3 = zip_source_buffer(z, buffer3, strlen(buffer3), 0);
+	zip_file_add(z, LOG_PATH_3, zs3, ZIP_FL_OVERWRITE |ZIP_FL_ENC_UTF_8);  
+
+
+	zip_close(z); 
+
+	fclose(zlog1);
+  fclose(zlog2);
+  fclose(zlog3);
+
+  free(buffer1); 
+  free(buffer2); 
+	free(buffer3); 
+
+  free(zs1);
+  free(zs2);
+  free(zs3);
+
+  printf("log completado\n");
+}
