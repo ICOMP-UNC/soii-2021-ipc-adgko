@@ -391,7 +391,11 @@ int32_t main( int argc, char *argv[] ) {
     								zip_close(z);
 
 							}else{
-									printf("estamos nose\n");
+									printf("Comando no soportado\n"
+									"Los comandos posibles son: \n"
+									"* add <ip>:<puerto> <productor nº> (subscribir cliente al productor)\n"
+									"* delete <ip>:<puerto> <productor nº> (dessubscribir cliente al productor)\n"
+									"* log <ip>:<puerto>  (enviar un zip del log al cliente)\n");
 							}
 								//
 								//	limpio las variables o se llenan de datos anteriores

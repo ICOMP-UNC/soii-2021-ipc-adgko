@@ -2,7 +2,7 @@
 
 int32_t sockfd, puerto;
 
-void signal_handler(void){
+void signal_handler(){
 	printf("cerrando conexión\n");
 	close(sockfd);
 	exit(1);
@@ -11,7 +11,7 @@ void signal_handler(void){
 /*
 	Función que se conecta al Delivery Managment vía socket y recibe mensajes
 */
-#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+
 int32_t main( int argc, char *argv[] ) {
 	
 	struct sockaddr_in serv_addr;
@@ -52,20 +52,28 @@ int32_t main( int argc, char *argv[] ) {
 			  exit(1);
 			}
 			
-			//char* token;
-			//token = strtok(buffer, " ");
-			//char hash[strlen(token)];
-			//sprintf(hash, "%s", token);
+			char mensaje[strlen(buffer)];
+			sprintf(mensaje,"%s",buffer);
+			//printf("%s",mensaje);
+
+			char* token;
+			token = strtok(buffer, " ");
+			char hash[1024];
+			sprintf(hash, "%s", token);
 			//printf("%s\n", hash);
 
-			//token = strtok(NULL, "\n");
-			//char mensaje[strlen(token)];
-			//sprintf(mensaje, "%s", token);
-			//printf("%s\n", mensaje);
-			
+			token = strtok(NULL, "\n");
+			char mensaje_aux[1024];
+			sprintf(mensaje_aux, "%s", token);
+			//printf("%s\n", mensaje_aux);
 
-			printf( "%sRecibí: %s%s\n", KBLU,buffer,KNRM );
+			//char* hashmd5 = md5(mensaje_aux,(int)strlen(mensaje_aux));
+
+			//printf("%s %s\n",hash,hashmd5);
 			
+			//if(strcmp(hash,hashmd5) == 0){
+				printf( "%sRecibí: %s%s\n", KBLU,mensaje_aux,KNRM );
+			//}
 			n = write( sockfd, "Obtuve su mensaje", 18 );
 			if ( n < 0 ) {
 			  perror( "escritura en socket" );

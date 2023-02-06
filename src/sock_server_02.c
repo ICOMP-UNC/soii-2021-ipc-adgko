@@ -8,7 +8,7 @@ long unsigned int   nfds = 1,i;
 */
 
 //Cuando se produce la interrupción, cierra la cola de mensaje y sale del programa
-void signal_handler(void){
+void signal_handler(){
 
 	printf("Cerrando cola de mensajes\n");
 	msgctl(get_queue(),IPC_RMID,(struct msqid_ds *) NULL);
@@ -21,7 +21,7 @@ void signal_handler(void){
 
 	exit(1);
 }
- #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+
 int32_t main( int argc, char *argv[] ) {
 	int32_t sockfd, newsockfd, puerto; 
     uint32_t clilen;
@@ -394,7 +394,11 @@ int32_t main( int argc, char *argv[] ) {
 
 
 							}else{
-									printf("estamos nose\n");
+									printf("Comando no soportado\n"
+									"Los comandos posibles son: \n"
+									"* add <ip>:<puerto> <productor nº> (subscribir cliente al productor)\n"
+									"* delete <ip>:<puerto> <productor nº> (dessubscribir cliente al productor)\n"
+									"* log <ip>:<puerto>  (enviar un zip del log al cliente)\n");
 							}
 								//
 								//	limpio las variables o se llenan de datos anteriores

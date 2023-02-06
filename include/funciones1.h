@@ -19,9 +19,3 @@ struct msgbuf {
    long mtype;
    char mtext[TAM];
 };
-
-/*
-int32_t get_queue();
-int32_t send_to_queue(long, char [TAM] );
-char* recive_from_queue(long , int32_t );
-*/

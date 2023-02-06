@@ -74,6 +74,8 @@
 int32_t get_queue();
 int32_t send_to_queue(long, char [TAM] );
 char* recive_from_queue(long , int32_t );
+void imprimir_log(int productor, char* mensaje,char* ip,int32_t puerto);
+void zipear();
 
 /*
     Estructura de los nodos de la lista
@@ -98,13 +100,10 @@ struct lista *insertafinal(struct lista *l, int32_t a,char* b,int32_t c);
 struct lista *elimina(struct lista *p, char* a,int32_t b);
 void ImprimirElementosLista (struct lista *a);
 
-void imprimir_log(int productor, char* mensaje,char* ip,int32_t puerto);
-void zipear();
+
 
 /*
     MD5
 */
 
 char *md5(const char*, int);
-
-//void zip_walk(struct zip_t*, const char*);

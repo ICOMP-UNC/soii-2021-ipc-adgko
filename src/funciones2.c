@@ -251,3 +251,4 @@ void zipear(){
 
   printf("log completado\n");
 }
+
