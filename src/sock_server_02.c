@@ -19,6 +19,8 @@ void signal_handler(){
 			close(fds[i].fd);
 		}
 
+		kill(-getpgrp(), SIGTERM);
+
 	exit(1);
 }
 
@@ -33,7 +35,7 @@ int32_t main( int argc, char *argv[] ) {
 	char* respuesta = malloc(sizeof(*respuesta));			//lo que envia al cliente
 
 	char* mensaje_prod1 = "Productor 1: ";					// etiqueta para ejecutar el binario del Productor 1								
-	char* mensaje_prod2 = "Productor 2: ";					// etiqueta para ejecutar el binario del Productor 2	
+	char* mensaje_prod2 = "Productor 2: ";					// etiqueta para ejecutar el bi+nario del Productor 2	
 	char* mensaje_prod3 = "Productor 3: ";					// etiqueta para ejecutar el binario del Productor 3	
 
 	int32_t rc, on = 1;
@@ -42,13 +44,13 @@ int32_t main( int argc, char *argv[] ) {
 	int32_t  compress_array = FALSE;	//end_server = FALSE,
   	//long unsigned int   nfds = 1, current_size = 0, i, j;
 	long unsigned int current_size = 0, j;
-	int32_t close_conn;
+	//int32_t close_conn;
 	struct lista *clientes_conectados;
 	clientes_conectados = NULL;
 	int32_t desconectado = 0;
 
 	//atexit(signal_handler);										// Cuando el programa se termina, invoca a la función handler
-    if (signal(SIGINT, signal_handler) == SIG_ERR) {			// crea el signal, el cual llamara al handler en caso de ingresar Ctrl+C
+    if (signal(SIGINT, signal_handler) == SIG_ERR || signal(SIGSEGV, signal_handler) == SIG_ERR) {			// crea el signal, el cual llamara al handler en caso de ingresar Ctrl+C
         fputs("Error al levantar el handler.\n", stderr);
 		free(respuesta);
         return EXIT_FAILURE;
@@ -98,6 +100,9 @@ int32_t main( int argc, char *argv[] ) {
    			}   			
    			exit(0);
 		}
+
+		// Establecer al proceso padre como líder del grupo de procesos
+    	setpgid(0, 0);
 	/*
 		Creación de Socket
 		AF_INET internet
@@ -195,8 +200,17 @@ int32_t main( int argc, char *argv[] ) {
 			*/
 			if(fds[i].revents != POLLIN)
 			{
-				printf("  Error! revents = %d\n", fds[i].revents);
+				//printf("  Error! revents = %d\n", fds[i].revents);
 				//end_server = TRUE;
+
+				if (fds[i].revents & (POLLERR | POLLHUP)) {
+						struct lista *aux = clientes_conectados;
+						while(aux != NULL){
+							if(aux->fd == fds[i].fd){
+								aux->desconectado = 1;
+							}
+						}
+				}
 				break;
 
 			}
@@ -219,7 +233,10 @@ int32_t main( int argc, char *argv[] ) {
 								}
 								aux = aux->sig;					 									
 							}			
-						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene				
+						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene		
+						//free(respuesta_aux);
+						//free(hashmd5);
+						//free(respuesta);		
 						}
 
 			mensaje = recive_from_queue((long)ID_PROD2,MSG_NOERROR | IPC_NOWAIT);
@@ -241,6 +258,9 @@ int32_t main( int argc, char *argv[] ) {
 								aux = aux->sig;							
 							}
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
+						//free(respuesta_aux);
+						//free(hashmd5);
+						//free(respuesta);
 						}
 
 			mensaje = recive_from_queue((long)ID_PROD3,MSG_NOERROR | IPC_NOWAIT);
@@ -262,6 +282,9 @@ int32_t main( int argc, char *argv[] ) {
 								aux = aux->sig;				
 							}
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene
+						//free(respuesta_aux);
+						//free(hashmd5);
+						//free(respuesta);
 						}
 
 						// Mensajes desde CLI
@@ -295,14 +318,14 @@ int32_t main( int argc, char *argv[] ) {
 							//toma lo que puse en <socket> y lo separa en ip y puerto	
 							char* login;			
 							login = strtok(socket,":");
-							char ip[strlen(login)];
+							char ip[strlen(login)*2];
 							if(ip == NULL){
 								perror("Fallo en alocar memoria en ip\n");
 							}
 							sprintf(ip,"%s",login);
 
 							login = strtok(NULL,":");
-							char puerto[strlen(login)];								
+							char puerto[strlen(login)*2];								
 							if(puerto == NULL){
 								perror("Fallo en alocar memoria en puerto\n");
 							}												
@@ -336,9 +359,11 @@ int32_t main( int argc, char *argv[] ) {
 												aux->subs_3 = 1;
 											}
 											agregado = 1;
+											break;
 										}
 										aux = aux->sig;
 									}
+									//free(aux);
 
 									//
 									//	Envía al CLI el resultado, si se agregó o no
@@ -373,26 +398,32 @@ int32_t main( int argc, char *argv[] ) {
 												aux->subs_3 = 0;
 											}
 											eliminado = 1;
+											break;
 										}
 										aux = aux->sig;
-										//
-										//	Envía al CLI el resultado, si se agregó o no
-										//
-										if(eliminado == 0){
-											sprintf(respuesta,"No se detecta cliente para eliminar\n");    
-										}else{
-											sprintf(respuesta,"Cliente eliminado con éxito\n");
-										}
+										
 										
 									}
+									//free(aux);
+									//
+									//	Envía al CLI el resultado, si se agregó o no
+									//
+									if(eliminado == 0){
+										sprintf(respuesta,"No se detecta cliente para eliminar\n");    
+									}else{
+										sprintf(respuesta,"Cliente eliminado con éxito\n");
+									}
+									
 									imprimir_log(LOG_CLI,respuesta,ip,atoi(puerto));
 							}
 
-							else if( strcmp("log", comando) == 0 ){
+							else if( strcmp("zip", comando) == 0 ){
 								printf("estamos logueando\n");
 									zipear();
+							}
 
-
+							else if( strcmp("log", comando) == 0 ){
+								
 							}else{
 									printf("Comando no soportado\n"
 									"Los comandos posibles son: \n"
@@ -406,9 +437,18 @@ int32_t main( int argc, char *argv[] ) {
 								memset(comando,'\0',strlen(comando));
 								memset(socket,'\0',strlen(socket));
 								memset(productor,'\0',strlen(productor));	
-								memset(ip,'\0',strlen(ip));	
-								memset(puerto,'\0',strlen(puerto));		
-								memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene															
+								//memset(ip,'\0',strlen(ip));	
+								//memset(puerto,'\0',strlen(puerto));		
+								memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene	
+								//free(mensaje_comando);		
+								//free(comando);
+								//free(socket);
+								//free(productor);
+								//free(ip);
+								//free(puerto);
+								//free(login);
+
+								//free(respuesta_aux);												
 						}
 						
 											
@@ -463,7 +503,7 @@ int32_t main( int argc, char *argv[] ) {
 				
 
 			}else{
-        		close_conn = FALSE;
+        		//close_conn = FALSE;
 
 
 				//ImprimirElementosLista(clientes_conectados);
@@ -473,12 +513,12 @@ int32_t main( int argc, char *argv[] ) {
 					/*
 						Cierrra todas las conexiones 
 					*/
-				    if (close_conn)
-					{
-					close(fds[i].fd);
-					fds[i].fd = -1;
-					compress_array = TRUE;
-					}
+				 //   if (close_conn)
+				//	{
+			//		close(fds[i].fd);
+			//		fds[i].fd = -1;
+			//		compress_array = TRUE;
+			//		}
 			} // acá termina el for de recorrer file descriptors
 			//////////////////////////////////
 				if(respuesta != NULL){}
@@ -516,11 +556,11 @@ int32_t main( int argc, char *argv[] ) {
 		/*
 			Cierra todos los sockets antes de cerrar el programa
 		*/
-	   for (i = 0; i < nfds; i++)
-		{
-			if(fds[i].fd >= 0)
-			close(fds[i].fd);
-		}
+	//   for (i = 0; i < nfds; i++)
+	//	{
+	//		if(fds[i].fd >= 0)
+	//		close(fds[i].fd);
+	//	}
 
 	return 0; 
  

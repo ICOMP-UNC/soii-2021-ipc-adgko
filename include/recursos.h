@@ -14,9 +14,9 @@
     Valores empleados para el calculo de tasa de envío de mensajes
     en los productores
 */
-#define X 3
-#define Y 2
-#define Z 4
+#define X 0.5
+#define Y 0.2
+#define Z 0.1
 
 /*
     etiquetas de los productores para la cola de mensajes

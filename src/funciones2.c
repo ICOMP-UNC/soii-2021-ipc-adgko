@@ -245,9 +245,9 @@ void zipear(){
   free(buffer2); 
 	free(buffer3); 
 
-  free(zs1);
-  free(zs2);
-  free(zs3);
+  zip_source_free(zs1);
+  zip_source_free(zs2);
+  zip_source_free(zs3);
 
   printf("log completado\n");
 }
