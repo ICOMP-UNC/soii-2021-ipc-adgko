@@ -19,3 +19,4 @@ struct msgbuf {
    long mtype;
    char mtext[TAM];
 };
+

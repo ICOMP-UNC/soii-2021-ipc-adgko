@@ -8,3 +8,7 @@
 #include <netinet/in.h>
 #include <netdb.h> 
 #include <signal.h>
+
+#define puerto_files 			 8020
+
+void conect_to_files();

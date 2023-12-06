@@ -28,12 +28,13 @@ cliente:
 server:
 	#gcc  src/sock_server.c src/funciones1.c src/funciones2.c -o bin/DeliveryManager $(FLAGS_GCC)
 	gcc  src/cli.c src/funciones1.c -o bin/cli $(FLAGS_GCC)
-	gcc  src/sock_server_02.c src/funciones1.c src/funciones2.c -o bin/DeliveryManager $(FLAGS_GCC)
+	gcc  src/sock_server_02.c src/funciones1.c src/funciones2.c  -o bin/DeliveryManager $(FLAGS_GCC)
 	
 productores:
 	gcc src/productor1.c src/funciones1.c -o bin/prod1 $(FLAGS_GCC)
 	gcc src/productor2.c src/funciones1.c -o bin/prod2 $(FLAGS_GCC)
 	gcc src/productor3.c src/funciones1.c -o bin/prod3 $(FLAGS_GCC)
+	gcc src/file.c	src/funciones1.c -o bin/file $(FLAGS_GCC)
 	
 docs:
 	doxygen Doxyfile

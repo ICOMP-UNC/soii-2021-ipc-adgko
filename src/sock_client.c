@@ -1,6 +1,7 @@
 #include "../include/cliente.h"
 
-int32_t sockfd, puerto;
+int32_t sockfd, sockfil,puerto;
+struct sockaddr_in serv_addr,serv_addr_file;
 
 void signal_handler(){
 	printf("cerrando conexión\n");
@@ -14,7 +15,7 @@ void signal_handler(){
 
 int32_t main( int argc, char *argv[] ) {
 	
-	struct sockaddr_in serv_addr;
+	
 	struct hostent *server;
     ssize_t n;
 
@@ -27,12 +28,16 @@ int32_t main( int argc, char *argv[] ) {
 	puerto = atoi( argv[2] );
 	sockfd = socket( AF_INET, SOCK_STREAM, 0 );
 
+
 	server = gethostbyname( argv[1] );
 
 	memset( (char *) &serv_addr, '0', sizeof(serv_addr) );
 	serv_addr.sin_family = AF_INET;
+	serv_addr_file.sin_family = AF_INET;	// que se conecte al socket de log
 	bcopy( (char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, (size_t )server->h_length );
+	bcopy( (char *)server->h_addr, (char *)&serv_addr_file.sin_addr.s_addr, (size_t)server->h_length ); //a file
 	serv_addr.sin_port = htons( (uint16_t)puerto );
+	serv_addr_file.sin_port = htons( (uint16_t) puerto_files );											 // a file
 	if ( connect( sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr ) ) < 0 ) {
 		perror( "conexion" );
 		exit( 1 );
@@ -73,11 +78,47 @@ int32_t main( int argc, char *argv[] ) {
 			
 			//if(strcmp(hash,hashmd5) == 0){
 				printf( "%sRecibí: %s%s\n", KBLU,mensaje_aux,KNRM );
+
+			if(strcmp(mensaje_aux,"download-file") == 0){
+
+				conect_to_files();
+
+				
+			/* 	n = send(sockfil,"obtuve mens",20,0);
+				if ( n < 0 ) {
+			 	  perror( "escritura de socket" );
+				  exit(1);
+				}
+				printf("mensaje enviado\n"); */
+
+				n = recv( sockfil, buffer, TAM-1, MSG_WAITALL );
+				if ( n < 0 ) {
+			 	  perror( "lectura de socket" );
+				  exit(1);
+				}
+
+				
+				printf( "%sRecibí: %s%s\n", KBLU,buffer,KNRM );
+				//printf("Recibí recibido \n");
+				//n = write( sockfd, "ok", 18 );
+
+//				sockfil = socket( AF_INET, SOCK_STREAM, 0 );
+//				if ( sockfil < 0 ) {
+//					perror( "ERROR apertura de socket" );
+//					exit( 1 );
+//				}
+//				if ( connect( sockfil, (struct sockaddr *)&serv_addr_file, sizeof(serv_addr_file ) ) < 0 ) {
+//					perror( "conexion" );
+//					exit( 1 );
+//				}
+			}
 			//}
+			else{
 			n = write( sockfd, "Obtuve su mensaje", 18 );
 			if ( n < 0 ) {
-			  perror( "escritura en socket" );
-			  exit( 1 );
+				perror( "escritura en socket" );
+				exit( 1 );
+			}
 			}
 			// Verificación de si hay que terminar
 			buffer[strlen(buffer)-1] = '\0';
@@ -90,3 +131,22 @@ int32_t main( int argc, char *argv[] ) {
 
 	return 0;
 } 
+
+/*
+	Es lo mismo que connect_to_server, pero para file, 
+	así le pasa el archivo que quiere descargar por otro socket distinto
+	al que usa para enviar comandos
+*/
+void conect_to_files(){
+	sockfil = socket( AF_INET, SOCK_STREAM, 0 );
+	if ( sockfil < 0 ) {
+		perror( "ERROR apertura de socket" );
+		exit( 1 );
+	}
+
+	if ( connect( sockfil, (struct sockaddr *)&serv_addr_file, sizeof(serv_addr_file ) ) < 0 ) {
+		perror( "conexion" );
+		exit( 1 );
+	}
+	printf("conectado \n");
+}

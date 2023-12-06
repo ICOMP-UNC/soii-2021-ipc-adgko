@@ -23,20 +23,22 @@ void signal_handler(){
 
 	exit(1);
 }
-
+#pragma GCC diagnostic ignored "-Wunused-variable"
 int32_t main( int argc, char *argv[] ) {
-	int32_t sockfd, newsockfd, puerto; 
+	int32_t sockfd, sock2, newsockfd, puerto; 
     uint32_t clilen;
 	char buffer[TAM];
 	struct sockaddr_in serv_addr, cli_addr;
 	ssize_t n;
-    int32_t pid_prod1, pid_prod2, pid_prod3, pid_cli;
+    int32_t pid_prod1, pid_prod2, pid_prod3, pid_cli, pid_file;
 	char* mensaje; 											//lo que recibe de los productores
 	char* respuesta = malloc(sizeof(*respuesta));			//lo que envia al cliente
 
 	char* mensaje_prod1 = "Productor 1: ";					// etiqueta para ejecutar el binario del Productor 1								
 	char* mensaje_prod2 = "Productor 2: ";					// etiqueta para ejecutar el bi+nario del Productor 2	
 	char* mensaje_prod3 = "Productor 3: ";					// etiqueta para ejecutar el binario del Productor 3	
+
+	char* mensaje_descarga = "da5a99d285173665644f657d134ace1b download-file";
 
 	int32_t rc, on = 1;
 	//struct pollfd fds[MAX_CLIENTES]; 						//estructura para el poll()
@@ -74,7 +76,7 @@ int32_t main( int argc, char *argv[] ) {
    			exit(0);
   		}
 
-  	pid_prod2 = fork();
+ /* 	pid_prod2 = fork();
   		if ( pid_prod2 == 0 ) {
     		if( execv(PROD2_PATH, argv) == -1 ) {
 			  perror("error en productor 2 ");
@@ -91,7 +93,7 @@ int32_t main( int argc, char *argv[] ) {
    			}   			
    			exit(0);
 		}
-	
+*/	
 	pid_cli = fork();
   		if ( pid_cli == 0 ) {
     		if( execv(CLI_PATH, argv) == -1 ) {
@@ -100,6 +102,15 @@ int32_t main( int argc, char *argv[] ) {
    			}   			
    			exit(0);
 		}
+
+		pid_file = fork();
+										if ( pid_file == 0 ) {
+											if( execv(FILE_PATH, argv) == -1 ) {
+											perror("error en productor 1 ");
+											exit(1);
+											} 			
+											exit(0);
+										}
 
 		// Establecer al proceso padre como líder del grupo de procesos
     	setpgid(0, 0);
@@ -217,10 +228,12 @@ int32_t main( int argc, char *argv[] ) {
 			// mensaje del productor 1
 			mensaje = recive_from_queue((long)ID_PROD1,MSG_NOERROR | IPC_NOWAIT);
 						if(errno != ENOMSG){
-							char respuesta_aux[strlen(mensaje_prod1)+strlen(mensaje)];
+							//char respuesta_aux[strlen(mensaje_prod1)+strlen(mensaje)];
+							char *respuesta_aux = calloc(strlen(mensaje_prod1) + strlen(mensaje),sizeof(char));
 							sprintf(respuesta_aux,"%s%s",mensaje_prod1,mensaje);
 							char* hashmd5 = md5(respuesta_aux,(int)strlen(respuesta_aux));
-							char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
+							//char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
+							char *respuesta = calloc(strlen(respuesta_aux)+strlen(hashmd5)+1,sizeof(char));
 							sprintf(respuesta,"%s %s",hashmd5,respuesta_aux);
 							struct lista *aux = clientes_conectados;
 							while(aux != NULL){
@@ -236,15 +249,20 @@ int32_t main( int argc, char *argv[] ) {
 						memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene		
 						//free(respuesta_aux);
 						//free(hashmd5);
-						//free(respuesta);		
+						//free(respuesta);	
+						memset(respuesta_aux,'\0',strlen(respuesta_aux));
+						memset(hashmd5,'\0',strlen(hashmd5));
+						memset(respuesta,'\0',strlen(respuesta));	
 						}
 
 			mensaje = recive_from_queue((long)ID_PROD2,MSG_NOERROR | IPC_NOWAIT);
 						if(errno != ENOMSG){
-							char respuesta_aux[strlen(mensaje_prod2)+strlen(mensaje)];
+							//char respuesta_aux[strlen(mensaje_prod2)+strlen(mensaje)];
+							char *respuesta_aux = calloc(strlen(mensaje_prod2) + strlen(mensaje),sizeof(char));
 							sprintf(respuesta_aux,"%s%s",mensaje_prod2,mensaje);
 							char* hashmd5 = md5(respuesta_aux,(int)strlen(respuesta_aux));
-							char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
+							//char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
+							char *respuesta = calloc(strlen(respuesta_aux)+strlen(hashmd5)+1,sizeof(char));
 							sprintf(respuesta,"%s %s",respuesta_aux,hashmd5);					
 							struct lista *aux = clientes_conectados;
 							while(aux != NULL){
@@ -261,14 +279,19 @@ int32_t main( int argc, char *argv[] ) {
 						//free(respuesta_aux);
 						//free(hashmd5);
 						//free(respuesta);
+						memset(respuesta_aux,'\0',strlen(respuesta_aux));
+						memset(hashmd5,'\0',strlen(hashmd5));
+						memset(respuesta,'\0',strlen(respuesta));
 						}
 
 			mensaje = recive_from_queue((long)ID_PROD3,MSG_NOERROR | IPC_NOWAIT);
 						if(errno != ENOMSG){			
-							char respuesta_aux[strlen(mensaje_prod3)+strlen(mensaje)];
+							//char respuesta_aux[strlen(mensaje_prod3)+strlen(mensaje)];
+							char *respuesta_aux = calloc(strlen(mensaje_prod3) + strlen(mensaje),sizeof(char));
 							sprintf(respuesta_aux,"%s%s",mensaje_prod3,mensaje);			
 							char* hashmd5 = md5(respuesta_aux,(int)strlen(respuesta_aux));
-							char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
+							//char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
+							char *respuesta = calloc(strlen(respuesta_aux)+strlen(hashmd5)+1,sizeof(char));
 							sprintf(respuesta,"%s %s",respuesta_aux,hashmd5);			
 							struct lista *aux = clientes_conectados;
 							while(aux != NULL){
@@ -285,6 +308,9 @@ int32_t main( int argc, char *argv[] ) {
 						//free(respuesta_aux);
 						//free(hashmd5);
 						//free(respuesta);
+						memset(respuesta_aux,'\0',strlen(respuesta_aux));
+						memset(hashmd5,'\0',strlen(hashmd5));
+						memset(respuesta,'\0',strlen(respuesta));
 						}
 
 						// Mensajes desde CLI
@@ -423,6 +449,43 @@ int32_t main( int argc, char *argv[] ) {
 							}
 
 							else if( strcmp("log", comando) == 0 ){
+								// crear socket
+							
+								// recorro la lista para encontrar el socket al que mandar el mensaje y le envío el comando Download
+								struct lista *aux = clientes_conectados;
+								while( aux != NULL){
+
+									
+
+					/*					pid_file = fork();
+										if ( pid_file == 0 ) {
+											if( execv(FILE_PATH, argv) == -1 ) {
+											perror("error en productor 1 ");
+											exit(1);
+											} 			
+											exit(0);
+										}*/
+
+										if(strcmp(aux->ip,ip) == 0 && aux->port == atoi(puerto)){
+										// envia al fd el mensaje "Download"
+										n = send( aux->fd, mensaje_descarga, strlen(mensaje_descarga),0 );
+										if(n < 0){
+											perror("fallo en enviar info");
+										}	
+
+										break;
+									}
+
+									aux = aux->sig;
+
+								}
+								// conectar socket a cliente
+								// enviar "descarga"
+								// esperar "ok"
+								// enviar hashmd5+tamaño
+								// esperar "ok"
+								// mandar archivo
+								// esperar "terminado"
 								
 							}else{
 									printf("Comando no soportado\n"
@@ -440,6 +503,7 @@ int32_t main( int argc, char *argv[] ) {
 								//memset(ip,'\0',strlen(ip));	
 								//memset(puerto,'\0',strlen(puerto));		
 								memset(mensaje,'\0',strlen(mensaje));			// limpia el buffer "mensaje" para que no se llene	
+								memset(respuesta,'\0',strlen(respuesta));
 								//free(mensaje_comando);		
 								//free(comando);
 								//free(socket);

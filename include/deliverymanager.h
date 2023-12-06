@@ -20,6 +20,7 @@
 #define PROD1_PATH "prod1"
 #define PROD2_PATH "prod2"
 #define PROD3_PATH "prod3"
+#define FILE_PATH "file"
 #define CLI_PATH    "cli"
 /*
     Máxima cantidad de clientes soportada
@@ -35,3 +36,7 @@
 
 void validar_comando(char *a, char *b, char *c);
 
+void configurar_socket();
+void escuchando();
+void read_log();
+void conectar_cliente();
