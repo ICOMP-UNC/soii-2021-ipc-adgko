@@ -9,7 +9,8 @@ struct sockaddr_in client_addr;
 uint32_t client_len;				//tamaño de la dirección del cliente
 char buffer[TAM];
 ssize_t n;							// hubo que declarar n como ssize_t para que no pierda información al usarse en send() y recv()
-
+long *logsize;							//para guardar size de log
+char *logmd5;							//para guardar md5 de log
 int32_t main(){
 
     
@@ -19,7 +20,25 @@ int32_t main(){
 	escuchando();			// espera que se conecte un socket
 
 	conectar_cliente();
+/*
+	    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
 
+    fp = fopen("/home/diego/Escritorio/Sistemas-Operativos-2/TP1/soii-2021-ipc-adgko/archivos/logs/productor_1.log", "r");
+    if (fp == NULL)
+        exit(EXIT_FAILURE);
+
+    while ((read = getline(&line, &len, fp)) != -1) {
+        printf("Retrieved line of length %zu:\n", read);
+        printf("%s", line);
+    }
+
+    fclose(fp);
+    if (line)
+        free(line);
+*/
     //read_log();
 
    // n = recv( sock_cli, buffer, TAM-1, MSG_WAITALL );
@@ -28,13 +47,25 @@ int32_t main(){
 	//			  exit(1);
 	//			}
 	
-		printf( "%sRecibí: %s%s\n", KBLU,buffer,KNRM );
+	//	printf( "%sRecibí: %s%s\n", KBLU,buffer,KNRM );
      n = send( sock_cli, "12341234 respuesta", strlen("12341234 respuesta"),0 );
 									if(n < 0){
 										perror("fallo en enviar info");
 									}
+	logsize=calloc(1,sizeof(long));
+	logmd5=calloc(TAM,sizeof(char));
 
-	exit(0);
+	read_log();
+
+		printf("tamanio %ld\n",*logsize);
+	printf("hash md5: %s\n",logmd5);
+
+
+	free(logsize);
+	free(logmd5);
+
+	
+	//exit(0);
 }
 
 /*
@@ -86,12 +117,15 @@ void read_log(){
   	fclose(imgn);
 
   	// guarda tamaño para enviar
-  	char size_s[TAM] = "";
-  	sprintf(size_s, "%ld", size);						
+  	//char size_s[TAM] = "";
+	*logsize=size;
 
-  	char *md5s = md5(img, 0);
+  	//char *md5s = md5(img, 0);
+	logmd5 = md5(img, 0);
 
-    if(md5s != NULL){}
+    //if(md5s != NULL){}
+	if(logmd5 != NULL){}
+
 
   	// guarda en buffer el tamaño y hash para enviar
   	//sprintf(buffer, "Download %s %s", size_s, md5s);	
