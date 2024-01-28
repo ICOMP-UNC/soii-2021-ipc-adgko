@@ -18,6 +18,7 @@ int32_t main( int argc, char *argv[] ) {
 	
 	struct hostent *server;
     ssize_t n;
+	//ssize_t size;
 
 	char buffer[TAM];
 	if ( argc < 3 ) {
@@ -59,7 +60,7 @@ int32_t main( int argc, char *argv[] ) {
 			
 			char mensaje[strlen(buffer)];
 			sprintf(mensaje,"%s",buffer);
-			//printf("%s",mensaje);
+			printf("El mensaje mensaje es: %s\n",mensaje);
 
 			char* token;
 			token = strtok(buffer, " ");
@@ -81,36 +82,56 @@ int32_t main( int argc, char *argv[] ) {
 
 			if(strcmp(mensaje_aux,"download-file") == 0){
 
+				int32_t downloader = fork();
+				if ( downloader == 0 ) {
+					if( execv(DOWNLOAD, argv) == -1 ) {
+					perror("error en downloader ");
+					//exit(1);
+					} 			
+					//exit(0);
+				}
+
+/*
 				conect_to_files();
 
-				
-			/* 	n = send(sockfil,"obtuve mens",20,0);
-				if ( n < 0 ) {
-			 	  perror( "escritura de socket" );
-				  exit(1);
+				memset( buffer, 0, TAM );
+
+				printf("iniciando descarga\n");
+				//se abre el archivo destino con modo wb para la escritura
+				FILE* file = fopen( "/home/diego/Descargas/log.zip", "wb" );
+
+				if(file != NULL) {
+					ssize_t readed=0;
+
+					while((size=recv(sockfil, buffer, sizeof(buffer), 0))> 0 ){
+						if(!(strcmp(buffer,"EOF")))
+							break;
+						fwrite(buffer, sizeof(char), (size_t) size, file);
+						readed+=size;
+					}
+					//se obtienen los datos una vez finalizada la descarga
+
+					printf("Descarga terminada: %ld Bytes\n",readed);
+					fclose(file);
+					//se cierra la conexion
+					shutdown(sockfil,SHUT_RDWR);
+				}else {
+					perror("error al descargar archivo\n");
+					exit(1);
 				}
-				printf("mensaje enviado\n"); */
+*/
 
-				n = recv( sockfil, buffer, TAM-1, MSG_WAITALL );
-				if ( n < 0 ) {
-			 	  perror( "lectura de socket" );
-				  exit(1);
-				}
-
+//				n = recv( sockfil, buffer, TAM-1, MSG_WAITALL );
+//				if ( n < 0 ) {
+//			 	  perror( "lectura de socket" );
+//				  exit(1);
+//				}
 				
-				printf( "%sRecibí: %s%s\n", KBLU,buffer,KNRM );
-				//printf("Recibí recibido \n");
-				//n = write( sockfd, "ok", 18 );
+//				printf( "%sRecibí: %s%s\n", KBLU,buffer,KNRM );
 
-//				sockfil = socket( AF_INET, SOCK_STREAM, 0 );
-//				if ( sockfil < 0 ) {
-//					perror( "ERROR apertura de socket" );
-//					exit( 1 );
-//				}
-//				if ( connect( sockfil, (struct sockaddr *)&serv_addr_file, sizeof(serv_addr_file ) ) < 0 ) {
-//					perror( "conexion" );
-//					exit( 1 );
-//				}
+
+
+
 			}
 			//}
 			else{
@@ -150,3 +171,80 @@ void conect_to_files(){
 	}
 	printf("conectado \n");
 }
+
+
+/*				 FILE *file = fopen("/home/diego/Descargas/log.zip", "wb");
+    			if (!file) {
+					perror("Error al abrir el archivo para escritura");
+					close(sockfd);
+					exit(EXIT_FAILURE);
+				}
+
+				// Recibir datos del servidor
+				char buffer[TAM];
+				ssize_t bytesRead;
+				while ((bytesRead = recv(sockfd, buffer, sizeof(buffer), 0)) > 0) {
+					// Verificar si se recibió el indicador de fin de archivo
+					if (bytesRead == 3 && strncmp(buffer, "EOF", 3) == 0) {
+						break;
+					}
+				}
+
+*/
+				
+			/* 	n = send(sockfil,"obtuve mens",20,0);
+				if ( n < 0 ) {
+			 	  perror( "escritura de socket" );
+				  exit(1);
+				}
+				printf("mensaje enviado\n"); */
+
+				/*n = recv( sockfil, buffer, TAM-1, MSG_WAITALL );
+				if ( n < 0 ) {
+			 	  perror( "lectura de socket" );
+				  exit(1);
+				}
+
+				
+
+				
+				printf( "%sRecibí: %s%s\n", KBLU,buffer,KNRM );
+
+				if(strcmp(buffer,"12341234 respuesta") == 0){
+					n = write(sockfd, "ok", 18);
+					if (n < 0) {
+						perror("escritura en socket");
+						exit(1);
+					}
+				}*/
+
+				// envío confimación
+				/*n = send( sockfil, "123 OK", strlen("123 OK"),0 );
+									if(n < 0){
+										perror("fallo en enviar info");
+									}
+				memset( buffer, 0, TAM );*/
+
+				// Lo mismo pero para el tamaño
+			//	n = recv( sockfil, buffer, TAM-1, MSG_WAITALL );
+			//	if ( n < 0 ) {
+			// 	  perror( "lectura de socket" );
+		//		  exit(1);
+		//		}
+
+				
+		//		printf( "%stamanio: %s%s\n", KBLU,buffer,KNRM );
+
+
+				//printf("Recibí recibido \n");
+				//n = write( sockfd, "ok", 18 );
+
+//				sockfil = socket( AF_INET, SOCK_STREAM, 0 );
+//				if ( sockfil < 0 ) {
+//					perror( "ERROR apertura de socket" );
+//					exit( 1 );
+//				}
+//				if ( connect( sockfil, (struct sockaddr *)&serv_addr_file, sizeof(serv_addr_file ) ) < 0 ) {
+//					perror( "conexion" );
+//					exit( 1 );
+//				}

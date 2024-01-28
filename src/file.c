@@ -19,54 +19,59 @@ int32_t main(){
 
 	escuchando();			// espera que se conecte un socket
 
+	// En el servidor (file)
+	printf("Esperando conexiones en el puerto %d\n", puerto_files);
+
+while(1){
 	conectar_cliente();
 /*
-	    FILE * fp;
-    char * line = NULL;
-    size_t len = 0;
-    ssize_t read;
+	FILE*  file= fopen(IMAGES_PATH, "r");
+	if ( file != NULL ) {
+        int32_t fd=fileno(file);
+        struct stat file_stat;
+        fstat(fd, &file_stat);
+		if ((sendfile(sockfd, fd, 0,(size_t) file_stat.st_size)) < 0) {
+            perror("error al transferir archivo");
+            exit(1);
+        }
+        fclose(file);
+        //una vez terminada la transferencia se envia EOF para indicar la finalizacion
+        strcpy(buffer,"EOF");
+        send(sockfd,buffer,sizeof(buffer),0);
+        printf("Terminando descarga\n");
+	}
+	else {
+		perror("archivo inexistente\n");
+	}
 
-    fp = fopen("/home/diego/Escritorio/Sistemas-Operativos-2/TP1/soii-2021-ipc-adgko/archivos/logs/productor_1.log", "r");
-    if (fp == NULL)
-        exit(EXIT_FAILURE);
-
-    while ((read = getline(&line, &len, fp)) != -1) {
-        printf("Retrieved line of length %zu:\n", read);
-        printf("%s", line);
-    }
-
-    fclose(fp);
-    if (line)
-        free(line);
 */
-    //read_log();
 
-   // n = recv( sock_cli, buffer, TAM-1, MSG_WAITALL );
-	//			if ( n < 0 ) {
-	//		 	 perror( "lectura de socket" );
-	//			  exit(1);
-	//			}
-	
-	//	printf( "%sRecibí: %s%s\n", KBLU,buffer,KNRM );
-     n = send( sock_cli, "12341234 respuesta", strlen("12341234 respuesta"),0 );
+	//char *mensaje = "conexión";
+	n = send( sock_cli, "conexion", strlen("conexion"),0 );
+	//n = send( sock_cli, mensaje, strlen(mensaje),0 );
 									if(n < 0){
 										perror("fallo en enviar info");
 									}
-	logsize=calloc(1,sizeof(long));
-	logmd5=calloc(TAM,sizeof(char));
 
-	read_log();
+	//logsize=calloc(1,sizeof(long));
+	//logmd5=calloc(TAM,sizeof(char));
 
-		printf("tamanio %ld\n",*logsize);
-	printf("hash md5: %s\n",logmd5);
+	//read_log();
+
+	//printf("tamanio %ld\n",*logsize);
+	//printf("hash md5: %s\n",logmd5);
 
 
-	free(logsize);
-	free(logmd5);
+
+	//free(logsize);
+	//free(logmd5);
 
 	
 	//exit(0);
+	}
+	return 0;
 }
+
 
 /*
 	Configura el socket con el que se enviará la imagen
@@ -151,3 +156,101 @@ void conectar_cliente(){
 	}
 	printf("conectado");
 }
+
+/*
+	    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    fp = fopen("/home/diego/Escritorio/Sistemas-Operativos-2/TP1/soii-2021-ipc-adgko/archivos/logs/productor_1.log", "r");
+    if (fp == NULL)
+        exit(EXIT_FAILURE);
+
+    while ((read = getline(&line, &len, fp)) != -1) {
+        printf("Retrieved line of length %zu:\n", read);
+        printf("%s", line);
+    }
+
+    fclose(fp);
+    if (line)
+        free(line);
+*/
+    //read_log();
+
+   // n = recv( sock_cli, buffer, TAM-1, MSG_WAITALL );
+	//			if ( n < 0 ) {
+	//		 	 perror( "lectura de socket" );
+	//			  exit(1);
+	//			}
+	
+	//	printf( "%sRecibí: %s%s\n", KBLU,buffer,KNRM );
+ //    n = send( sock_cli, "12341234 respuesta", strlen("12341234 respuesta"),0 );
+//									if(n < 0){
+//										perror("fallo en enviar info");
+//									}
+
+ //	n = recv(sock_cli, buffer, TAM - 1, MSG_WAITALL);
+ //   if (n < 0) {
+ //       perror("lectura de socket");
+ //       exit(1);
+ //   }
+									//if(n == 0){printf("Se cerró la comunicación\n");}
+     //A ver si llegó
+	/*n = recv( sock_cli, buffer, TAM-1, MSG_WAITALL );
+				if ( n < 0 ) {
+			 	  perror( "lectura de socket" );
+				  exit(1);
+				}
+
+				
+				printf( "%sRecibí: %s%s\n", KBLU,buffer,KNRM );
+	memset( buffer, 0, TAM );
+	*/
+
+/*	FILE *imgn;
+  	imgn = fopen(IMAGES_PATH, "rb");
+  	if(imgn == NULL)
+  	{
+    	perror("file");
+  	}
+
+	char buffer[TAM];
+        size_t bytesRead;
+        while ((bytesRead = fread(buffer, 1, sizeof(buffer), imgn)) > 0) {
+            if (send(sock_cli, buffer, bytesRead, 0) == -1) {
+                perror("Error al enviar datos al cliente");
+                break;
+            }
+        }
+
+        // Enviar indicador de fin de archivo
+        send(sock_cli, "EOF", 3, 0);
+
+        // Cerrar el archivo y conexión con el cliente
+        fclose(imgn);
+*/
+	//n = send(sock_cli,logsize,sizeof(long),0);
+	//if(n<0) {
+	//	perror("fallo en enviar info");
+	//	}
+
+	//en caso de exito se abre el archivo y se inicia transferencia por medio de sendFile 
+
+	
+/*
+	FILE*  file= fopen(IMAGES_PATH, "r");
+	if ( file != NULL ) {
+        int32_t fd=fileno(file);
+        struct stat file_stat;
+        fstat(fd, &file_stat);
+		if ((sendfile(sock_cli, fd, 0,(size_t) file_stat.st_size)) < 0) {
+            perror("error al transferir archivo");
+            exit(1);
+        }
+        fclose(file);
+        //una vez terminada la transferencia se envia EOF para indicar la finalizacion
+        strcpy(buffer,"EOF");
+        send(sock_cli,buffer,sizeof(buffer),0);
+        printf("Terminando descarga\n");
+*/

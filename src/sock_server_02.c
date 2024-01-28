@@ -383,6 +383,9 @@ int32_t main( int argc, char *argv[] ) {
 											}
 											else if(strcmp(productor,"3") == 0){
 												aux->subs_3 = 1;
+											}else{
+												printf("productor incorrecto. Opciones: 1, 2 o 3\n");
+												break;
 											}
 											agregado = 1;
 											break;
@@ -395,9 +398,9 @@ int32_t main( int argc, char *argv[] ) {
 									//	Envía al CLI el resultado, si se agregó o no
 									//
 									if(agregado == 0){
-										sprintf(respuesta,"No se detecta cliente para agregar\n");    
+										sprintf(respuesta,"No se detecta cliente para agregar %s:%s\n",ip,puerto);    
 									}else{
-										sprintf(respuesta,"Cliente agregado con éxito\n");
+										sprintf(respuesta,"Cliente agregado con éxito %s:%s productor %s\n",ip,puerto,productor);
 									}	
 
 								imprimir_log(LOG_CLI,respuesta,ip,atoi(puerto));
@@ -422,6 +425,9 @@ int32_t main( int argc, char *argv[] ) {
 											}
 											else if(strcmp(productor,"3") == 0){
 												aux->subs_3 = 0;
+											}else{
+												printf("productor incorrecto. Opciones: 1, 2 o 3\n");
+												break;
 											}
 											eliminado = 1;
 											break;
@@ -435,9 +441,9 @@ int32_t main( int argc, char *argv[] ) {
 									//	Envía al CLI el resultado, si se agregó o no
 									//
 									if(eliminado == 0){
-										sprintf(respuesta,"No se detecta cliente para eliminar\n");    
+										sprintf(respuesta,"No se detecta cliente para eliminar %s:%s\n",ip,puerto);    
 									}else{
-										sprintf(respuesta,"Cliente eliminado con éxito\n");
+										sprintf(respuesta,"Cliente eliminado con éxito %s:%s productor %s\n",ip,puerto,productor);
 									}
 									
 									imprimir_log(LOG_CLI,respuesta,ip,atoi(puerto));

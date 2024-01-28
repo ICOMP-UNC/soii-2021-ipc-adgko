@@ -11,4 +11,10 @@
 
 #define puerto_files 			 8020
 
+#define DOWNLOAD                 "downloader"
+
 void conect_to_files();
+void configurar_socket();
+void conect_to_files();
+
+int isdownload = 0;

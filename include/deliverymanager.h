@@ -13,6 +13,8 @@
 #include <sys/poll.h> 
 #include <arpa/inet.h>
 #include <signal.h>
+#include <sys/sendfile.h>
+
 
 /*
     Paths de los binarios productores y CLI
@@ -26,7 +28,6 @@
     Máxima cantidad de clientes soportada
 */
 #define MAX_CLIENTES 5000
-
 /*
     Constantes para determinar tiempo antes de cerrar la conexión
 */
