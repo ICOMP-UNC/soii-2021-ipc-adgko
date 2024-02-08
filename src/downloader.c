@@ -1,6 +1,7 @@
 #include "../include/cliente.h"
 #define puerto_downloader 8021
 #define puerto_files 8020
+#define archivo_destino  "/home/diego/Descargas/log.zip"
 
 int32_t sockfd, sockfil;
 struct sockaddr_in serv_addr;
@@ -10,6 +11,8 @@ char buffer[TAM];
 ssize_t n;     // hubo que declarar n como ssize_t para que no pierda información al usarse en send() y recv()
 long *logsize; // para guardar size de log
 char *logmd5;  // para guardar md5 de log
+//int size;
+size_t size;
 int32_t main()
 {
 
@@ -41,7 +44,17 @@ int32_t main()
         exit(1);
     }
 
-    printf("%sRecibí: %s%s\n", KBLU, buffer, KNRM);
+    //printf("%sRecibí: %s%s\n", KBLU, buffer, KNRM);
+
+    char tamanio[TAM];
+     sprintf(tamanio,"%s",buffer);
+     printf("%sRecibí: %s%s\n", KBLU, tamanio, KNRM);
+
+    //size = atoi(tamanio);
+    size = strtoul(tamanio, NULL, 10);
+
+
+
 
     // envía confirmaciòn
     n = send(sockfil, "mandame el hash", strlen("mandame el hash"), 0);
@@ -60,7 +73,57 @@ int32_t main()
         exit(1);
     }
 
-    printf("%sRecibí: %s%s\n", KBLU, buffer, KNRM);
+    //printf("%sRecibí: %s%s\n", KBLU, buffer, KNRM);
+
+     char md5_recv[TAM];
+     sprintf(md5_recv,"%s",buffer);
+     printf("%sRecibí: %s%s\n", KBLU, md5_recv, KNRM);
+
+     //envía confirmación para que le envíen archivo
+     n = send(sockfil, "mandame el archivo", strlen("mandame el archivo"), 0);
+    if (n < 0)
+    {
+        perror("fallo en enviar info");
+    }
+
+    memset(buffer, 0, TAM);
+
+    // recibir archivo
+    int fd_destino = open(archivo_destino, O_WRONLY | O_CREAT, 0666);
+    if (fd_destino == -1)
+    {
+        perror("Error al abrir el archivo de destino");
+        exit(1);
+    }
+    
+    do
+    {
+      n = recv(sockfil, buffer, TAM, 0);
+      if ( n < 0 ) {
+	  	perror( "error de recepción\n" );
+        close(fd_destino);
+	  	exit(1);
+	  }
+      else if(n > 0){
+        // Escribir los datos recibidos en el archivo de destino
+            if (write(fd_destino, buffer, (size_t)n) == -1)
+            {
+                perror("Error al escribir en el archivo de destino");
+                close(fd_destino);
+                exit(1);
+            }
+      }
+
+      //fwrite(buffer, sizeof(char), (size_t) n, usb);
+      //size -= (size_t) n;
+      size -= (size_t)n;
+    }
+  while(size != 0);
+
+   close(fd_destino);
+   close(sockfd);
+
+   return 0;
 }
 
 void configurar_socket()

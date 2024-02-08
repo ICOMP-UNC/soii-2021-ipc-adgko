@@ -14,6 +14,8 @@
 #include <arpa/inet.h>
 #include <signal.h>
 #include <sys/sendfile.h>
+#include <sys/stat.h>   //para open()
+#include <fcntl.h>      // para open()
 
 
 /*
@@ -41,3 +43,4 @@ void configurar_socket();
 void escuchando();
 void read_log();
 void conectar_cliente();
+void enviar_log();

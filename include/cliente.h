@@ -8,6 +8,9 @@
 #include <netinet/in.h>
 #include <netdb.h> 
 #include <signal.h>
+#include <openssl/md5.h>
+#include <fcntl.h>  // Para las constantes O_WRONLY y O_CREAT
+
 
 #define puerto_files 			 8020
 

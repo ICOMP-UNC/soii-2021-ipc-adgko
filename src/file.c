@@ -1,6 +1,6 @@
 #include "../include/deliverymanager.h"
 #define puerto_files 8020
-#define IMAGES_PATH "/home/diego/Escritorio/Sistemas-Operativos-2/TP1/soii-2021-ipc-adgko/bin/CreatureLootPDF.pdf"
+#define IMAGES_PATH "/home/diego/Escritorio/Sistemas-Operativos-2/TP1/soii-2021-ipc-adgko/bin/log.zip"
 
 int32_t sockfd, sock_cli;
 struct sockaddr_in serv_addr;
@@ -71,12 +71,12 @@ int32_t main()
 			perror("fallo en enviar info");
 		}
 		// espera confirmaciòn
-		    n = recv(sock_cli, buffer, TAM - 1, 0);
-    if (n < 0)
-    {
-        perror("lectura de socket");
-        exit(1);
-    }
+	    n = recv(sock_cli, buffer, TAM - 1, 0);
+		if (n < 0)
+		{
+			perror("lectura de socket");
+			exit(1);
+		}
 
 		// envía  hash md5
 		 n = send(sock_cli, logmd5 , strlen(logmd5), 0);
@@ -84,6 +84,17 @@ int32_t main()
 		{
 			perror("fallo en enviar info");
 		}
+
+		// espera confirmaciòn
+	    n = recv(sock_cli, buffer, TAM - 1, 0);
+		if (n < 0)
+		{
+			perror("lectura de socket");
+			exit(1);
+		}
+
+		// enviar el archivo
+		enviar_log();
 
 		 free(logsize);
 		 free(logmd5);
@@ -148,6 +159,11 @@ void read_log()
 
 	// guarda tamaño para enviar
 	// char size_s[TAM] = "";
+	logsize = malloc(sizeof(long));
+    if (logsize == NULL) {
+        perror("error al reservar memoria para logsize");
+        //exit(EXIT_FAILURE);
+    }
 	*logsize = size;
 
 	// char *md5s = md5(img, 0);
@@ -181,6 +197,92 @@ void conectar_cliente()
 	printf("conectado");
 }
 
+void enviar_log() {
+    char img[TAM];
+
+    sprintf(img, "%s", IMAGES_PATH); // Path de la imagen
+    FILE *imgn = fopen(img, "r");
+    if (imgn == NULL) {
+        perror("Error al abrir el archivo");
+        exit(1);
+    }
+
+    // Obtener el tamaño del archivo
+    fseek(imgn, 0, SEEK_END);
+    //long size = ftell(imgn);
+    fseek(imgn, 0, SEEK_SET);
+
+    // Leer y enviar el archivo en fragmentos
+    size_t bytes_read;
+    while ((bytes_read = fread(buffer, 1, TAM, imgn)) > 0) {
+        if (send(sock_cli, buffer, bytes_read, 0) == -1) {
+            perror("Error al enviar el archivo");
+            exit(1);
+        }
+    }
+
+    fclose(imgn);
+}
+/*
+void enviar_log(){
+	int32_t imgfd;
+	char img[TAM];
+	long size = 0;
+
+	sprintf(img, "%s", IMAGES_PATH); // Path de la imagen
+//	imgfd = open(img, O_RDONLY);
+//	if(imgfd == -1)
+//  		{
+//    		perror("error");
+//    		exit(EXIT_FAILURE);
+//  		}
+//	printf("%s Enviando log %s\n",KBLU,KNRM);
+
+	FILE *imgn = fopen(img, "r");
+    if (imgn == NULL) {
+        perror("Error al abrir el archivo");
+        exit(1);
+    }
+
+//	size_t to_send = (size_t) size;
+//  	ssize_t sent;
+//	off_t offset = 0;
+
+	// Obtener el tamaño del archivo
+    fseek(imgn, 0, SEEK_END);
+    size = ftell(imgn);
+    fseek(imgn, 0, SEEK_SET);
+
+//	while(((sent = sendfile(sock_cli, imgfd, &offset, to_send)) > 0)
+//			&& (to_send > 0))
+//	{
+//		to_send -= (size_t) sent;
+//		printf(" %sSe envió %lu %s\n", KGRN, sent, KNRM);
+//	}
+
+//	if (sent == 0 && to_send == 0) {
+  //  printf("Se ha enviado todo el archivo correctamente\n");
+//} else {
+  //  perror("Error al enviar el archivo");
+    //exit(1);/
+//}
+
+//	printf(" %sSe envió %lu %s\n", KGRN, size, KNRM);
+
+//	close(imgfd);
+
+	// Leer y enviar el archivo en fragmentos
+    size_t bytes_read;
+    while ((bytes_read = fread(buffer, 1, TAM, imgn)) > 0) {
+        if (send(sock_cli, buffer, bytes_read, 0) == -1) {
+            perror("Error al enviar el archivo");
+            exit(1);
+        }
+    }
+
+    fclose(imgn);
+}
+*/
 /*
 		FILE * fp;
 	char * line = NULL;
