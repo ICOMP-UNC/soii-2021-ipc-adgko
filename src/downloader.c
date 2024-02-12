@@ -120,6 +120,18 @@ int32_t main()
     }
   while(size != 0);
 
+
+  char *logmd5 = md5(archivo_destino, 0);
+  //printf("\nMD5 del archivo: %s\n", logmd5);
+  if(strcmp(logmd5,md5_recv) == 0){
+    printf("MD5 correcto %s\n",logmd5);
+    printf("Archivo  descargado y MD5 verificados con exito.\n");
+  }else{
+    printf("ERROR: El archivo no se ha podido descargar o la integridad del mismo es incorrecta. \n");
+    remove(archivo_destino);
+  }
+
+
    close(fd_destino);
    close(sockfd);
 
@@ -158,52 +170,3 @@ void conect_to_files()
     }
     printf("conectado \n");
 }
-/*
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-
-#define puerto_files    8020
-#define TAM 1024
-
-int32_t sockfd;
-struct sockaddr_in serv_addr;
-char buffer[TAM];
-
-int main() {
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        perror("Error al abrir el socket");
-        exit(EXIT_FAILURE);
-    }
-
-    memset(&serv_addr, '0', sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(puerto_files);
-
-    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
-        perror("Dirección no válida");
-        exit(EXIT_FAILURE);
-    }
-
-    if (connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
-        perror("Error al conectar");
-        exit(EXIT_FAILURE);
-    }
-
-    printf("Conectado al servidor. Esperando mensaje...\n");
-
-    ssize_t n = recv(sockfd, buffer, TAM - 1, MSG_WAITALL);
-    if (n < 0) {
-        perror("Error al leer del socket");
-        exit(EXIT_FAILURE);
-    }
-
-    buffer[n] = '\0';
-    printf("Recibido: %s\n", buffer);
-
-    close(sockfd);
-    return 0;
-}*/

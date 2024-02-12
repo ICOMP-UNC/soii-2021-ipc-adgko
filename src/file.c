@@ -170,9 +170,9 @@ void read_log()
 	logmd5 = md5(img, 0);
 
 	// if(md5s != NULL){}
-	if (logmd5 != NULL)
-	{
-	}
+	//if (logmd5 != NULL)
+	//{
+	//}
 
 	// guarda en buffer el tamaño y hash para enviar
 	// sprintf(buffer, "Download %s %s", size_s, md5s);
@@ -194,7 +194,7 @@ void conectar_cliente()
 		perror("accept");
 		exit(1);
 	}
-	printf("conectado");
+	printf("conectado\n");
 }
 
 void enviar_log() {
