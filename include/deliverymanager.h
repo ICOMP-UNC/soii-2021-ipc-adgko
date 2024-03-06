@@ -26,6 +26,7 @@
 #define PROD3_PATH "prod3"
 #define FILE_PATH "file"
 #define CLI_PATH    "cli"
+#define TAM_MAX_MENSAJE 10240
 /*
     Máxima cantidad de clientes soportada
 */

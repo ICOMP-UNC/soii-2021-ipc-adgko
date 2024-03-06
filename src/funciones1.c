@@ -35,7 +35,7 @@ int32_t send_to_queue(long id_mensaje, char mensaje[TAM]) {
   mensaje_str.mtype = id_mensaje;
   sprintf(mensaje_str.mtext, "%s", mensaje);
 
-  return msgsnd(msqid, &mensaje_str, sizeof mensaje_str.mtext, 0 );
+  return msgsnd(msqid, &mensaje_str, strlen(mensaje_str.mtext) + 1, 0 );
 }
 
 char* recive_from_queue(long id_mensaje, int32_t flag) {
@@ -50,11 +50,28 @@ char* recive_from_queue(long id_mensaje, int32_t flag) {
         exit(1);
       }
   }
-  char* mensaje = malloc(strlen(mensaje_str.mtext));
+  char* mensaje = malloc(strlen(mensaje_str.mtext)+1);
+   if (mensaje == NULL) {
+        perror("error asignando memoria");
+        exit(1);
+    }
   sprintf(mensaje,"%s", mensaje_str.mtext);
   return mensaje;
 }
 
+// Función para vaciar una cola de mensajes
+/*void vaciar_cola() {
+    struct msgbuf msg;
+    int32_t msqid=get_queue();
+    // Vaciar la cola de mensajes
+    while (msgrcv(msqid, &msg, MAX_MESG_SIZE, 0, IPC_NOWAIT) != -1) {
+        printf("Mensaje vaciado: %s\n", msg.mtext);
+    }
+    if (errno != ENOMSG) {
+        perror("Error al vaciar la cola de mensajes");
+    }
+}
+*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //								                          MD5
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

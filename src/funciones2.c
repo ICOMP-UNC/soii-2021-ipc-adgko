@@ -206,7 +206,7 @@ void zipear(){
 	int err = 0;
 	zip_t* z = zip_open("log.zip", ZIP_CREATE, &err);
 	if(z == NULL){
-		perror("Error al clear el archivo zip\n");
+		perror("Error al crear el archivo zip\n");
 		exit(EXIT_FAILURE);
 	}
   //agrego el log del productor 1

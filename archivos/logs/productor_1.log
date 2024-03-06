@@ -170,3 +170,105 @@
  | 127.0.0.1:38632 
 2024-02-12 17:17:01 | productor_1 | 178717d5db4c4d85033eb1ce259c9d31 Productor 1: El número aleatorio es 2044897763
  | 127.0.0.1:38632 
+2024-02-13 18:14:23 | productor_1 | bac38a0c02953e379b8aaa8e3833eb4a Productor 1: El número aleatorio es 1189641421
+ | 127.0.0.1:22251 
+2024-02-13 18:14:25 | productor_1 | 127b23e6e871dec03bd47f7aa3b1177d Productor 1: El número aleatorio es 1025202362
+ | 127.0.0.1:22251 
+2024-02-13 18:14:27 | productor_1 | 0e7435ea7403b35a1b1b1c28cd7e098d Productor 1: El número aleatorio es 1350490027
+ | 127.0.0.1:22251 
+2024-02-13 18:14:29 | productor_1 | 1a5fb42ea2b3ed3a8052c5b1c4ff7eaa Productor 1: El número aleatorio es 783368690
+ | 127.0.0.1:22251 
+2024-02-13 18:14:31 | productor_1 | eefad1c14f93efc973175a7e4e3d4591 Productor 1: El número aleatorio es 1102520059
+ | 127.0.0.1:22251 
+2024-03-05 20:11:01 | productor_1 | 564f6329c3b448d860c136b80f9d488c Productor 1: El número aleatorio es 1649760492
+ | 127.0.0.1:54987 
+2024-03-05 20:11:03 | productor_1 | b0e5b0e0f11ae6be0485534efb64460a Productor 1: El número aleatorio es 596516649
+ | 127.0.0.1:54987 
+2024-03-05 20:11:05 | productor_1 | bac38a0c02953e379b8aaa8e3833eb4a Productor 1: El número aleatorio es 1189641421
+ | 127.0.0.1:54987 
+2024-03-05 20:11:07 | productor_1 | 127b23e6e871dec03bd47f7aa3b1177d Productor 1: El número aleatorio es 1025202362
+ | 127.0.0.1:54987 
+2024-03-05 20:19:31 | productor_1 | 5f831bfa89d3bda78c6dffcc491c0ca3 Productor 1: El número aleatorio es 719885386
+ | 127.0.0.1:15039 
+2024-03-05 20:19:33 | productor_1 | 564f6329c3b448d860c136b80f9d488c Productor 1: El número aleatorio es 1649760492
+ | 127.0.0.1:15039 
+2024-03-05 20:19:35 | productor_1 | b0e5b0e0f11ae6be0485534efb64460a Productor 1: El número aleatorio es 596516649
+ | 127.0.0.1:15039 
+2024-03-05 20:19:37 | productor_1 | bac38a0c02953e379b8aaa8e3833eb4a Productor 1: El número aleatorio es 1189641421
+ | 127.0.0.1:15039 
+2024-03-05 20:19:39 | productor_1 | 127b23e6e871dec03bd47f7aa3b1177d Productor 1: El número aleatorio es 1025202362
+ | 127.0.0.1:15039 
+2024-03-05 20:19:41 | productor_1 | 0e7435ea7403b35a1b1b1c28cd7e098d Productor 1: El número aleatorio es 1350490027
+ | 127.0.0.1:15039 
+2024-03-05 20:19:43 | productor_1 | 1a5fb42ea2b3ed3a8052c5b1c4ff7eaa Productor 1: El número aleatorio es 783368690
+ | 127.0.0.1:15039 
+2024-03-05 20:19:45 | productor_1 | eefad1c14f93efc973175a7e4e3d4591 Productor 1: El número aleatorio es 1102520059
+ | 127.0.0.1:15039 
+2024-03-05 20:19:47 | productor_1 | 178717d5db4c4d85033eb1ce259c9d31 Productor 1: El número aleatorio es 2044897763
+ | 127.0.0.1:15039 
+2024-03-06 16:18:07 | productor_1 | 127b23e6e871dec03bd47f7aa3b1177d Productor 1: El número aleatorio es 1025202362
+ | 127.0.0.1:12476 
+2024-03-06 16:18:09 | productor_1 | 0e7435ea7403b35a1b1b1c28cd7e098d Productor 1: El número aleatorio es 1350490027
+ | 127.0.0.1:12476 
+2024-03-06 16:18:11 | productor_1 | 1a5fb42ea2b3ed3a8052c5b1c4ff7eaa Productor 1: El número aleatorio es 783368690
+ | 127.0.0.1:12476 
+2024-03-06 16:25:19 | productor_1 | 5f831bfa89d3bda78c6dffcc491c0ca3 Productor 1: El número aleatorio es 719885386
+ | 127.0.0.1:2279 
+2024-03-06 16:25:21 | productor_1 | 564f6329c3b448d860c136b80f9d488c Productor 1: El número aleatorio es 1649760492
+ | 127.0.0.1:2279 
+2024-03-06 16:25:23 | productor_1 | b0e5b0e0f11ae6be0485534efb64460a Productor 1: El número aleatorio es 596516649
+ | 127.0.0.1:2279 
+2024-03-06 16:25:25 | productor_1 | bac38a0c02953e379b8aaa8e3833eb4a Productor 1: El número aleatorio es 1189641421
+ | 127.0.0.1:2279 
+2024-03-06 16:25:27 | productor_1 | 127b23e6e871dec03bd47f7aa3b1177d Productor 1: El número aleatorio es 1025202362
+ | 127.0.0.1:2279 
+2024-03-06 16:25:29 | productor_1 | 0e7435ea7403b35a1b1b1c28cd7e098d Productor 1: El número aleatorio es 1350490027
+ | 127.0.0.1:2279 
+2024-03-06 16:25:31 | productor_1 | 1a5fb42ea2b3ed3a8052c5b1c4ff7eaa Productor 1: El número aleatorio es 783368690
+ | 127.0.0.1:2279 
+2024-03-06 16:25:33 | productor_1 | eefad1c14f93efc973175a7e4e3d4591 Productor 1: El número aleatorio es 1102520059
+ | 127.0.0.1:2279 
+2024-03-06 16:25:35 | productor_1 | 178717d5db4c4d85033eb1ce259c9d31 Productor 1: El número aleatorio es 2044897763
+ | 127.0.0.1:2279 
+2024-03-06 16:25:37 | productor_1 | 64c037a4a47e88db151e56f19f9c1178 Productor 1: El número aleatorio es 1967513926
+ | 127.0.0.1:2279 
+2024-03-06 16:25:39 | productor_1 | 6421191e5232fce632ef8c72443154ee Productor 1: El número aleatorio es 1365180540
+ | 127.0.0.1:2279 
+2024-03-06 16:30:37 | productor_1 | 861cf781b1c2c320c61b57f621fbaf20 Productor 1: El número aleatorio es 424238335
+ | 127.0.0.1:1237 
+2024-03-06 16:30:39 | productor_1 | 5f831bfa89d3bda78c6dffcc491c0ca3 Productor 1: El número aleatorio es 719885386
+ | 127.0.0.1:1237 
+2024-03-06 16:30:41 | productor_1 | 564f6329c3b448d860c136b80f9d488c Productor 1: El número aleatorio es 1649760492
+ | 127.0.0.1:1237 
+2024-03-06 16:30:43 | productor_1 | b0e5b0e0f11ae6be0485534efb64460a Productor 1: El número aleatorio es 596516649
+ | 127.0.0.1:1237 
+2024-03-06 16:30:45 | productor_1 | bac38a0c02953e379b8aaa8e3833eb4a Productor 1: El número aleatorio es 1189641421
+ | 127.0.0.1:1237 
+2024-03-06 16:30:47 | productor_1 | 127b23e6e871dec03bd47f7aa3b1177d Productor 1: El número aleatorio es 1025202362
+ | 127.0.0.1:1237 
+2024-03-06 16:30:49 | productor_1 | 0e7435ea7403b35a1b1b1c28cd7e098d Productor 1: El número aleatorio es 1350490027
+ | 127.0.0.1:1237 
+2024-03-06 16:30:51 | productor_1 | 1a5fb42ea2b3ed3a8052c5b1c4ff7eaa Productor 1: El número aleatorio es 783368690
+ | 127.0.0.1:1237 
+2024-03-06 16:30:53 | productor_1 | eefad1c14f93efc973175a7e4e3d4591 Productor 1: El número aleatorio es 1102520059
+ | 127.0.0.1:1237 
+2024-03-06 16:30:55 | productor_1 | 178717d5db4c4d85033eb1ce259c9d31 Productor 1: El número aleatorio es 2044897763
+ | 127.0.0.1:1237 
+2024-03-06 16:30:57 | productor_1 | 64c037a4a47e88db151e56f19f9c1178 Productor 1: El número aleatorio es 1967513926
+ | 127.0.0.1:1237 
+2024-03-06 16:30:59 | productor_1 | 6421191e5232fce632ef8c72443154ee Productor 1: El número aleatorio es 1365180540
+ | 127.0.0.1:1237 
+2024-03-06 16:31:01 | productor_1 | 1d62689084e91f72581ea1d44603dcdb Productor 1: El número aleatorio es 1540383426
+ | 127.0.0.1:1237 
+2024-03-06 16:31:03 | productor_1 | b76d9999bd84b37e2b7b4ea7697c0613 Productor 1: El número aleatorio es 304089172
+ | 127.0.0.1:1237 
+2024-03-06 16:31:05 | productor_1 | 895aa34b3f8f86cf0dcd7b64ab8d05a7 Productor 1: El número aleatorio es 1303455736
+ | 127.0.0.1:1237 
+2024-03-06 16:31:08 | productor_1 | 2a4ac09a2badceb70c6e3df27ccddd73 Productor 1: El número aleatorio es 35005211
+ | 127.0.0.1:1237 
+2024-03-06 16:31:09 | productor_1 | c83cdec208772201c46d4aabae32d6e2 Productor 1: El número aleatorio es 521595368
+ | 127.0.0.1:1237 
+2024-03-06 16:31:11 | productor_1 | 71238c30668db4b99240b873b3673a07 Productor 1: El número aleatorio es 294702567
+ | 127.0.0.1:1237 
+2024-03-06 16:31:13 | productor_1 | e6129ced34d77901ab012bd4317ea72b Productor 1: El número aleatorio es 1726956429
+ | 127.0.0.1:1237 

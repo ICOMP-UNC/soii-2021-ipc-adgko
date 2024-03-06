@@ -16,7 +16,7 @@
 */
 #define X 0.5
 #define Y 0.2
-#define Z 0.1
+#define Z 100
 
 /*
     etiquetas de los productores para la cola de mensajes
@@ -76,7 +76,7 @@ int32_t send_to_queue(long, char [TAM] );
 char* recive_from_queue(long , int32_t );
 void imprimir_log(int productor, char* mensaje,char* ip,int32_t puerto);
 void zipear();
-
+void vaciar_cola();
 /*
     Estructura de los nodos de la lista
 */

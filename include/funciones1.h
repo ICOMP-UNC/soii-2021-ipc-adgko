@@ -11,6 +11,7 @@
 #define UNIQUE_KEY 			65
 #define PROJ_ID 			   0777                    //permisos para todos
 #define direccion_server 	"src/sock_server.c"
+#define MAX_MESG_SIZE 8192
 
 /*
 	Estructura del buffer de la cola de mensajes

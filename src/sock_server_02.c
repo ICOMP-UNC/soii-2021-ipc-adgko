@@ -33,8 +33,11 @@ int32_t main(int argc, char *argv[])
 	struct sockaddr_in serv_addr, cli_addr;
 	ssize_t n;
 	int32_t pid_prod1, pid_prod2, pid_prod3, pid_cli, pid_file;
-	char *mensaje;								  // lo que recibe de los productores
+	char *mensaje;						
+	
+	//char *mensaje2 = malloc(sizeof(*mensaje2	));		  // lo que recibe de los productores
 	char *respuesta = malloc(sizeof(*respuesta)); // lo que envia al cliente
+	//char *mensaje2 = malloc(sizeof(*mensaje2)); //
 
 	char *mensaje_prod1 = "Productor 1: "; // etiqueta para ejecutar el binario del Productor 1
 	char *mensaje_prod2 = "Productor 2: "; // etiqueta para ejecutar el bi+nario del Productor 2
@@ -81,7 +84,8 @@ int32_t main(int argc, char *argv[])
 		}
 		exit(0);
 	}
-/*
+	
+
 	 	pid_prod2 = fork();
 		   if ( pid_prod2 == 0 ) {
 			   if( execv(PROD2_PATH, argv) == -1 ) {
@@ -99,7 +103,7 @@ int32_t main(int argc, char *argv[])
 			   }
 			   exit(0);
 		   }
- */  
+  
 	pid_cli = fork();
 	if (pid_cli == 0)
 	{
@@ -197,6 +201,8 @@ int32_t main(int argc, char *argv[])
 	while (1)
 	{ // antes había do-while. Lo cambié porque quiero que se quede ejecutando siempre
 
+		//vaciar_cola();
+
 		rc = poll(fds, nfds, timeout);
 		if (rc < 0)
 		{
@@ -277,38 +283,51 @@ int32_t main(int argc, char *argv[])
 				memset(hashmd5, '\0', strlen(hashmd5));
 				memset(respuesta, '\0', strlen(respuesta));
 			}
-
-			mensaje = recive_from_queue((long)ID_PROD2, MSG_NOERROR | IPC_NOWAIT);
+//printf("paso 0\n");
+			char *mensaje2 = recive_from_queue((long)ID_PROD2, MSG_NOERROR | IPC_NOWAIT);
+			//printf("paso 0.5 : %s\n",mensaje);
 			if (errno != ENOMSG)
 			{
+				//rintf("paso 1\n");
 				// char respuesta_aux[strlen(mensaje_prod2)+strlen(mensaje)];
 				char *respuesta_aux = calloc(strlen(mensaje_prod2) + strlen(mensaje), sizeof(char));
 				sprintf(respuesta_aux, "%s%s", mensaje_prod2, mensaje);
+				//printf("paso 2\n");
 				char *hashmd5 = md5(respuesta_aux, (int)strlen(respuesta_aux));
 				// char respuesta[strlen(respuesta_aux)+strlen(hashmd5)+1];
 				char *respuesta = calloc(strlen(respuesta_aux) + strlen(hashmd5) + 1, sizeof(char));
 				sprintf(respuesta, "%s %s", respuesta_aux, hashmd5);
+				//printf("paso 3\n");
+			//printf("%s\n",respuesta);
 				struct lista *aux = clientes_conectados;
+				//printf("paso 4\n");
 				while (aux != NULL)
 				{
+					//printf("paso 5\n");
 					if (aux->subs_2 == 1)
 					{
+						//printf("paso 6\n");
 						n = send(aux->fd, respuesta, strlen(respuesta), 0);
 						if (n < 0)
 						{
+							//printf("paso 7\n");
 							perror("fallo en enviar info");
 						}
 						imprimir_log(LOG_PROD_2, respuesta, aux->ip, aux->port);
 					}
 					aux = aux->sig;
 				}
+				//printf("paso 8\n");
 				memset(mensaje, '\0', strlen(mensaje)); // limpia el buffer "mensaje" para que no se llene
-				// free(respuesta_aux);
-				// free(hashmd5);
-				// free(respuesta);
-				memset(respuesta_aux, '\0', strlen(respuesta_aux));
-				memset(hashmd5, '\0', strlen(hashmd5));
-				memset(respuesta, '\0', strlen(respuesta));
+				//printf("paso 9\n");
+				 free(respuesta_aux);
+				 free(hashmd5);
+				 free(respuesta);
+				 //printf("paso 10\n");
+				 //free(mensaje2);
+				//memset(respuesta_aux, '\0', strlen(respuesta_aux));
+				//memset(hashmd5, '\0', strlen(hashmd5));
+				//memset(respuesta, '\0', strlen(respuesta));
 			}
 
 			mensaje = recive_from_queue((long)ID_PROD3, MSG_NOERROR | IPC_NOWAIT);
@@ -514,7 +533,7 @@ int32_t main(int argc, char *argv[])
 				else if (strcmp("log", comando) == 0)
 				{
 					// crear socket
-					//zipear();
+					zipear();
 
 					// recorro la lista para encontrar el socket al que mandar el mensaje y le envío el comando Download
 					struct lista *aux = clientes_conectados;
